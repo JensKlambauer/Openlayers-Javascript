@@ -49,17 +49,20 @@ map.on('singleclick', function (evt) {
 //   return a + b;
 // }
 
-// alert(app(4,5));
+// console.log(app(4,5));
 
 function request(url) {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     const xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function(e) {
+    xhr.onreadystatechange = function (e) {
       if (xhr.readyState === 4) {
         if (xhr.status === 200) {
           resolve(xhr.response)
         } else {
-          reject(xhr.status)
+          reject({
+            status: this.status,
+            statusText: xhr.statusText
+          });
         }
       }
     }
@@ -73,22 +76,23 @@ function request(url) {
 
 function handleRepoList(user, repos) {
   const userRepos = JSON.parse(repos)
-  
+
   // Handle each individual user repo here
   console.log(user, userRepos)
 }
 
 async function list() {
   const userGet = `https://api.github.com/search/users?page=1&q=jensklambauer&type=Users`;
-  
+
   const users = await request(userGet);
+  console.log(users)
   const usersList = JSON.parse(users).items;
-  
+
   usersList.forEach(async function (user) {
     const repos = await request(user.repos_url)
-    
+
     handleRepoList(user, repos)
   })
 }
 
-list().catch(e => console.error(e))
+// list().catch(e => {console.error("Error"); console.error(e);})
