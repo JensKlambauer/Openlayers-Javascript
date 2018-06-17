@@ -3,10 +3,10 @@ html, body {
     height: 100%;
   }
   
-  #map {
+#map {
     position: absolute;
-    top: 0;
-    bottom: 0;
+    top: 20px;
+    /* bottom: 0; */
     width: 75%;
     height: 500px;
   }

@@ -1,6 +1,9 @@
 const webpack = require('webpack');
 const path = require("path");
 const HtmlWebPackPlugin = require("html-webpack-plugin");
+const ExtractCssChunks = require("extract-css-chunks-webpack-plugin");
+
+const devMode = process.env.NODE_ENV !== 'production'
 
 const root = path.resolve(__dirname);
 const dist = path.join(root, "dist");
@@ -24,9 +27,9 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-          {loader: 'style-loader'},
-          {loader: 'css-loader'}
-        ]
+           ExtractCssChunks.loader,
+           "css-loader"
+         ]
       },
       {
         test: /\.html$/,
@@ -53,6 +56,15 @@ module.exports = {
       template: path.join(root, "src", "index.html"),
       filename: path.join(dist, "index.html")
     }),
+    new ExtractCssChunks(
+      {
+        // Options similar to the same options in webpackOptions.output
+        // both options are optional
+        filename: "[name].css",
+        chunkFilename: "[id].css",
+        hot: true // optional is the plguin cannot automatically detect if you are using HOT, not for production use
+      }
+  ),
     // new webpack.optimize.UglifyJsPlugin()
   ],
   devServer: {

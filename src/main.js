@@ -1,7 +1,7 @@
-import 'ol/ol.css';
-import 'ol-layerswitcher/src/ol-layerswitcher.css';
-import 'ol-popup/src/ol-popup.css';
-import "./styles.css";
+import _ol from 'ol/ol.css';
+import _lswitcher from 'ol-layerswitcher/src/ol-layerswitcher.css';
+import _popup from 'ol-popup/src/ol-popup.css';
+import styles from './styles.css';
 import Map from 'ol/map';
 import View from 'ol/view';
 import TileLayer from 'ol/layer/tile';
