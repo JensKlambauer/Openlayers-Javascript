@@ -12,6 +12,7 @@ import Group from 'ol/layer/group';
 import LayerSwitcher from 'ol-layerswitcher';
 import Popup from 'ol-popup';
 import Coordinate from 'ol/coordinate';
+import SachsenDop from './SachsenWmsDopLayer';
 
 const map = new Map({
   target: 'map',
@@ -23,7 +24,7 @@ const map = new Map({
         type: 'base',
         visible: true,
         source: new Osm()
-      })]
+      }), new SachsenDop()]
   })],
   view: new View({
     center: Proj.transform([13.2856, 51.2986], "EPSG:4326", "EPSG:3857"),

@@ -10,6 +10,7 @@
     "watch": "./node_modules/.bin/webpack-dev-server --port 8182 --mode development --hot"
   },
   "author": "Jens Klambauer",
+  "repository": "https://github.com/JensKlambauer/Openlayers-Javascript.git",
   "license": "MIT",
   "dependencies": {
     "babel-runtime": "^6.26.0",
