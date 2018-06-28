@@ -2,6 +2,7 @@ import _ol from 'ol/ol.css';
 import _lswitcher from 'ol-layerswitcher/src/ol-layerswitcher.css';
 import _popup from 'ol-popup/src/ol-popup.css';
 import styles from './styles.css';
+// 'use strict'; 
 import Map from 'ol/map';
 import View from 'ol/view';
 import TileLayer from 'ol/layer/tile';
@@ -13,6 +14,39 @@ import LayerSwitcher from 'ol-layerswitcher';
 import Popup from 'ol-popup';
 import Coordinate from 'ol/coordinate';
 import SachsenDop from './SachsenWmsDopLayer';
+// import WMTSCapabilities from 'ol/format/wmtscapabilities';
+// import WMSCapabilities from 'ol/format/wmscapabilities';
+
+// http://sg.geodatenzentrum.de/wms_vg250?request=GetCapabilities&service=wms
+// https://geodienste.sachsen.de/wms_geosn_dop-rgb/guest?REQUEST=GetCapabilities&SERVICE=WMS
+// var myHeaders = new Headers();
+// myHeaders.append("Content-Type", "application/xml");
+
+// var parser = new WMSCapabilities();
+// fetch('https://geodienste.sachsen.de/wms_geosn_dop-rgb/guest?REQUEST=GetCapabilities&SERVICE=WMS',
+// {
+//   mode: 'no-cors'
+// }).then(function(response) {
+//   return response.text();
+// }).then(function(text) { 
+//   var result = parser.read(text);
+//   console.log( JSON.stringify(result, null, 2));
+// });
+
+// var parser = new WMTSCapabilities();
+// fetch('https://geoportal.sachsen.de/portal/arcgis_wmts_capabilities/wmts_geosn_dop-rgb.xml', {
+//   // mode: 'no-cors', 
+//   headers : myHeaders,
+// }).then(function(response) {  
+//   return response.text();
+// }).then(function(text) {
+//   console.log("text");
+//   console.log(text);
+//   var result = parser.read(text);
+//   console.log( JSON.stringify(result, null, 2));
+// });
+
+
 
 const map = new Map({
   target: 'map',
@@ -98,3 +132,9 @@ async function list() {
 }
 
 // list().catch(e => {console.error("Error"); console.error(e);})
+
+// async function list1() {
+//   const resp = await request('https://geodienste.sachsen.de/wms_geosn_dop-rgb/guest?REQUEST=GetCapabilities&SERVICE=WMS');
+//   console.log(resp);
+// }
+// list1();
