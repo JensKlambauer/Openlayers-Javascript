@@ -1,5 +1,5 @@
-import TileLayer from 'ol/layer/tile';
-import TileWMS from 'ol/source/tilewms';
+import TileLayer from 'ol/layer/Tile';
+import TileWMS from 'ol/source/TileWMS';
 
 export default class SachsenWmsDopLayer extends TileLayer {
 

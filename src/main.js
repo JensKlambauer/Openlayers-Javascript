@@ -1,52 +1,20 @@
-import _ol from 'ol/ol.css';
-import _lswitcher from 'ol-layerswitcher/src/ol-layerswitcher.css';
-import _popup from 'ol-popup/src/ol-popup.css';
-import styles from './styles.css';
+import 'ol/ol.css';
+import 'ol-layerswitcher/src/ol-layerswitcher.css';
+import 'ol-popup/src/ol-popup.css';
+import './styles.css';
 // 'use strict'; 
-import Map from 'ol/map';
-import View from 'ol/view';
-import TileLayer from 'ol/layer/tile';
+import {Map, View} from 'ol';
+import TileLayer from 'ol/layer/Tile';
+import OSM from 'ol/source/OSM';
 //import XYZ from 'ol/source/xyz';
-import Osm from 'ol/source/osm';
-import Proj from 'ol/proj';
-import Group from 'ol/layer/group';
+// import Proj from 'ol/proj';
+import {addProjection, addCoordinateTransforms, transform, get} from 'ol/proj.js';
+import Group from 'ol/layer/Group';
 import LayerSwitcher from 'ol-layerswitcher';
 import Popup from 'ol-popup';
-import Coordinate from 'ol/coordinate';
+// import Coordinate from 'ol/coordinate';
+import {toStringHDMS} from 'ol/coordinate';
 import SachsenDop from './SachsenWmsDopLayer';
-// import WMTSCapabilities from 'ol/format/wmtscapabilities';
-// import WMSCapabilities from 'ol/format/wmscapabilities';
-
-// http://sg.geodatenzentrum.de/wms_vg250?request=GetCapabilities&service=wms
-// https://geodienste.sachsen.de/wms_geosn_dop-rgb/guest?REQUEST=GetCapabilities&SERVICE=WMS
-// var myHeaders = new Headers();
-// myHeaders.append("Content-Type", "application/xml");
-
-// var parser = new WMSCapabilities();
-// fetch('https://geodienste.sachsen.de/wms_geosn_dop-rgb/guest?REQUEST=GetCapabilities&SERVICE=WMS',
-// {
-//   mode: 'no-cors'
-// }).then(function(response) {
-//   return response.text();
-// }).then(function(text) { 
-//   var result = parser.read(text);
-//   console.log( JSON.stringify(result, null, 2));
-// });
-
-// var parser = new WMTSCapabilities();
-// fetch('https://geoportal.sachsen.de/portal/arcgis_wmts_capabilities/wmts_geosn_dop-rgb.xml', {
-//   // mode: 'no-cors', 
-//   headers : myHeaders,
-// }).then(function(response) {  
-//   return response.text();
-// }).then(function(text) {
-//   console.log("text");
-//   console.log(text);
-//   var result = parser.read(text);
-//   console.log( JSON.stringify(result, null, 2));
-// });
-
-
 
 const map = new Map({
   target: 'map',
@@ -57,12 +25,12 @@ const map = new Map({
         title: 'OSM',
         type: 'base',
         visible: true,
-        source: new Osm()
+        source: new OSM()
       }), new SachsenDop()]
   })],
   view: new View({
-    center: Proj.transform([13.2856, 51.2986], "EPSG:4326", "EPSG:3857"),
-    projection: Proj.get("EPSG:3857"),
+    center: transform([13.2856, 51.2986], "EPSG:4326", "EPSG:3857"),
+    projection: get("EPSG:3857"),
     zoom: 12,
   })
 });
@@ -77,7 +45,7 @@ map.addOverlay(popup);
 
 map.on('singleclick', function (evt) {
   //alert("Test");
-  var prettyCoord = Coordinate.toStringHDMS(Proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326'), 2);
+  var prettyCoord = toStringHDMS(transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326'), 2);
   popup.show(evt.coordinate, '<div><h2>Coordinates</h2><p>' + prettyCoord + '</p></div>');
 });
 
@@ -130,6 +98,39 @@ async function list() {
     handleRepoList(user, repos)
   })
 }
+
+// import WMTSCapabilities from 'ol/format/wmtscapabilities';
+// import WMSCapabilities from 'ol/format/wmscapabilities';
+
+// http://sg.geodatenzentrum.de/wms_vg250?request=GetCapabilities&service=wms
+// https://geodienste.sachsen.de/wms_geosn_dop-rgb/guest?REQUEST=GetCapabilities&SERVICE=WMS
+// var myHeaders = new Headers();
+// myHeaders.append("Content-Type", "application/xml");
+
+// var parser = new WMSCapabilities();
+// fetch('https://geodienste.sachsen.de/wms_geosn_dop-rgb/guest?REQUEST=GetCapabilities&SERVICE=WMS',
+// {
+//   mode: 'no-cors'
+// }).then(function(response) {
+//   return response.text();
+// }).then(function(text) { 
+//   var result = parser.read(text);
+//   console.log( JSON.stringify(result, null, 2));
+// });
+
+// var parser = new WMTSCapabilities();
+// fetch('https://geoportal.sachsen.de/portal/arcgis_wmts_capabilities/wmts_geosn_dop-rgb.xml', {
+//   // mode: 'no-cors', 
+//   headers : myHeaders,
+// }).then(function(response) {  
+//   return response.text();
+// }).then(function(text) {
+//   console.log("text");
+//   console.log(text);
+//   var result = parser.read(text);
+//   console.log( JSON.stringify(result, null, 2));
+// });
+
 
 // list().catch(e => {console.error("Error"); console.error(e);})
 
