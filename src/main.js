@@ -17,7 +17,10 @@ import {toStringHDMS} from 'ol/coordinate';
 import SachsenDop from './SachsenWmsDopLayer';
 import VectorLayer from 'ol/layer/Vector.js';
 import VectorSource from 'ol/source/Vector.js';
-import Polygon from 'ol/geom/Polygon';
+// import Polygon from 'ol/geom/Polygon';
+// import * as ol from 'ol';
+import { fromExtent } from 'ol/geom/Polygon.js';
+import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style.js';
 import Feature from 'ol/Feature.js';
 
 const map = new Map({
@@ -36,10 +39,10 @@ const map = new Map({
     center: transform([13.2856, 51.2986], "EPSG:4326", "EPSG:3857"),
     projection: get("EPSG:3857"),
     //resolution: 100   
-    zoom: 13,
+    zoom: 15,
   })
 });
-console.log(map.getView().getResolution())
+console.log("map res " + map.getView().getResolution());
 
 var layerSwitcher = new LayerSwitcher({
   tipLabel: 'Legende' // Optional label for button
@@ -55,11 +58,11 @@ map.on('singleclick', function (evt) {
   popup.show(evt.coordinate, '<div><h2>Coordinates</h2><p>' + prettyCoord + '</p></div>');
 });
 
-// console.log("DPI " + window.devicePixelRatio);
+console.log("DPI " + window.devicePixelRatio);
 
 // DPI berechnen => Bildschirm abhängig
 //var DOTS_PER_INCH = 25.4 / 0.28; 
-var DOTS_PER_INCH = 96; // PixelRatio == 1
+var DOTS_PER_INCH = 96 * window.devicePixelRatio; // PixelRatio == 1
 function getResolutionFromScale(scale, dpi){
     var units = map.getView().getProjection().getUnits();
     var mpu = METERS_PER_UNIT[units];
@@ -67,42 +70,48 @@ function getResolutionFromScale(scale, dpi){
     return resolution;
 }
 
-var res = getResolutionFromScale(10000, DOTS_PER_INCH);
-console.log(res);
+var res = getResolutionFromScale(25000, DOTS_PER_INCH);
+console.log("resolutionFromScale " + res);
 // map.getView().setResolution(res);
 // console.log(map.getView().getResolution())
-console.log(map.getView().calculateExtent());
 
-function mapScale (dpi) {
+function mapScale (dpi, res) {
   var unit = map.getView().getProjection().getUnits();
-  var resolution = map.getView().getResolution();
+  var resolution = res;
   var inchesPerMetre = 39.37;
 
   return resolution * METERS_PER_UNIT[unit] * inchesPerMetre * dpi;
 }
 
-console.log(mapScale(DOTS_PER_INCH));
+console.log("Scale MAP  " + mapScale(DOTS_PER_INCH, map.getView().getResolution()));
 // https://gis.stackexchange.com/questions/242424/how-to-get-map-units-to-find-current-scale-in-openlayers
 
-// let newView = new View(
-//   {
-//     center: transform([13.2856, 51.2986], "EPSG:4326", "EPSG:3857"),
-//      projection: get("EPSG:3857"),
-//      resolution: res
-//   });
-//   console.log(newView.calculateExtent());
+let newView = new View({
+     center: transform([13.2856, 51.2986], "EPSG:4326", "EPSG:3857"),
+     projection: get("EPSG:3857"),
+     resolution: res
+  });
+  console.log(newView.calculateExtent());
+  console.log("Scale View " + mapScale(DOTS_PER_INCH, res));
 
-//   const ext = newView.calculateExtent();
-//   var myPolygon = new Polygon.fromExtent(ext); 
-//   var feature = new Feature({
-//     wrapX: false ,
-//     'geometry': myPolygon
-//    });
-//   const vectorLayer = new VectorLayer({
-//     source: new VectorSource({
-//       features: [feature],
-//     })
-//   });
+  const ext = newView.calculateExtent();
+  // var ext = map.getView().calculateExtent(map.getSize());
+  var feature = new Feature({   
+    'geometry': fromExtent(ext)
+   });
+  const vectorLayer = new VectorLayer({
+    source: new VectorSource({
+      wrapX: false,
+      features: [feature],
+    }),
+    style: new Style({
+      stroke: new Stroke({
+        color: 'rgba(255, 0, 0, 1.0)',
+        width: 2
+      })
+    })
+  });
+  map.addLayer(vectorLayer);
 
 
 // const app = (a, b) => {
