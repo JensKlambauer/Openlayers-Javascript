@@ -15,6 +15,10 @@ import Popup from 'ol-popup';
 // import Coordinate from 'ol/coordinate';
 import {toStringHDMS} from 'ol/coordinate';
 import SachsenDop from './SachsenWmsDopLayer';
+import VectorLayer from 'ol/layer/Vector.js';
+import VectorSource from 'ol/source/Vector.js';
+import Polygon from 'ol/geom/Polygon';
+import Feature from 'ol/Feature.js';
 
 const map = new Map({
   target: 'map',
@@ -51,20 +55,23 @@ map.on('singleclick', function (evt) {
   popup.show(evt.coordinate, '<div><h2>Coordinates</h2><p>' + prettyCoord + '</p></div>');
 });
 
+// console.log("DPI " + window.devicePixelRatio);
+
 // DPI berechnen => Bildschirm abhängig
-var DOTS_PER_INCH = 25.4 / 0.28; 
+//var DOTS_PER_INCH = 25.4 / 0.28; 
+var DOTS_PER_INCH = 96; // PixelRatio == 1
 function getResolutionFromScale(scale, dpi){
     var units = map.getView().getProjection().getUnits();
-    // var dpi = 25.4 / 0.28;
     var mpu = METERS_PER_UNIT[units];
     var resolution = scale/(mpu * 39.37 * dpi);
     return resolution;
 }
 
-var res = getResolutionFromScale(80000, DOTS_PER_INCH);
+var res = getResolutionFromScale(10000, DOTS_PER_INCH);
 console.log(res);
-map.getView().setResolution(res);
-console.log(map.getView().getResolution())
+// map.getView().setResolution(res);
+// console.log(map.getView().getResolution())
+console.log(map.getView().calculateExtent());
 
 function mapScale (dpi) {
   var unit = map.getView().getProjection().getUnits();
@@ -76,6 +83,27 @@ function mapScale (dpi) {
 
 console.log(mapScale(DOTS_PER_INCH));
 // https://gis.stackexchange.com/questions/242424/how-to-get-map-units-to-find-current-scale-in-openlayers
+
+// let newView = new View(
+//   {
+//     center: transform([13.2856, 51.2986], "EPSG:4326", "EPSG:3857"),
+//      projection: get("EPSG:3857"),
+//      resolution: res
+//   });
+//   console.log(newView.calculateExtent());
+
+//   const ext = newView.calculateExtent();
+//   var myPolygon = new Polygon.fromExtent(ext); 
+//   var feature = new Feature({
+//     wrapX: false ,
+//     'geometry': myPolygon
+//    });
+//   const vectorLayer = new VectorLayer({
+//     source: new VectorSource({
+//       features: [feature],
+//     })
+//   });
+
 
 // const app = (a, b) => {
 //   return a + b;
