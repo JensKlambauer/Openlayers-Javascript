@@ -8,7 +8,7 @@ import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 //import XYZ from 'ol/source/xyz';
 // import Proj from 'ol/proj';
-import {addProjection, addCoordinateTransforms, transform, get} from 'ol/proj.js';
+import {addProjection, addCoordinateTransforms, transform, get, METERS_PER_UNIT} from 'ol/proj.js';
 import Group from 'ol/layer/Group';
 import LayerSwitcher from 'ol-layerswitcher';
 import Popup from 'ol-popup';
@@ -31,9 +31,11 @@ const map = new Map({
   view: new View({
     center: transform([13.2856, 51.2986], "EPSG:4326", "EPSG:3857"),
     projection: get("EPSG:3857"),
-    zoom: 12,
+    //resolution: 100   
+    zoom: 13,
   })
 });
+console.log(map.getView().getResolution())
 
 var layerSwitcher = new LayerSwitcher({
   tipLabel: 'Legende' // Optional label for button
@@ -48,6 +50,32 @@ map.on('singleclick', function (evt) {
   var prettyCoord = toStringHDMS(transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326'), 2);
   popup.show(evt.coordinate, '<div><h2>Coordinates</h2><p>' + prettyCoord + '</p></div>');
 });
+
+// DPI berechnen => Bildschirm abhängig
+var DOTS_PER_INCH = 25.4 / 0.28; 
+function getResolutionFromScale(scale, dpi){
+    var units = map.getView().getProjection().getUnits();
+    // var dpi = 25.4 / 0.28;
+    var mpu = METERS_PER_UNIT[units];
+    var resolution = scale/(mpu * 39.37 * dpi);
+    return resolution;
+}
+
+var res = getResolutionFromScale(80000, DOTS_PER_INCH);
+console.log(res);
+map.getView().setResolution(res);
+console.log(map.getView().getResolution())
+
+function mapScale (dpi) {
+  var unit = map.getView().getProjection().getUnits();
+  var resolution = map.getView().getResolution();
+  var inchesPerMetre = 39.37;
+
+  return resolution * METERS_PER_UNIT[unit] * inchesPerMetre * dpi;
+}
+
+console.log(mapScale(DOTS_PER_INCH));
+// https://gis.stackexchange.com/questions/242424/how-to-get-map-units-to-find-current-scale-in-openlayers
 
 // const app = (a, b) => {
 //   return a + b;
