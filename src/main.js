@@ -71,7 +71,6 @@ map.on('singleclick', function (evt) {
 console.log("DPI " + window.devicePixelRatio);
 
 // DPI berechnen => Bildschirm abhängig
-//var DOTS_PER_INCH = 25.4 / 0.28; 
 var DOTS_PER_INCH = 96 * window.devicePixelRatio; // PixelRatio == 1
 function getResolutionFromScale(scale, dpi) {
   var units = map.getView().getProjection().getUnits();
@@ -79,9 +78,10 @@ function getResolutionFromScale(scale, dpi) {
   var resolution = scale / (mpu * 39.37 * dpi);
   return resolution;
 }
+// Karte Maßstab setzen
+// map.getView().setResolution(getResolutionFromScale(80000, DOTS_PER_INCH));
 
-var res = getResolutionFromScale(50000, 150);
-console.log("resolutionFromScale " + res);
+// console.log("resolutionFromScale " + res);
 // map.getView().setResolution(res);
 // console.log(map.getView().getResolution())
 
@@ -94,28 +94,15 @@ function mapScale(dpi, res) {
 }
 
 console.log("Scale MAP  " + mapScale(DOTS_PER_INCH, map.getView().getResolution()));
-// https://gis.stackexchange.com/questions/242424/how-to-get-map-units-to-find-current-scale-in-openlayers
 
-let newView = new View({
-  center: map.getView().getCenter(),
-  projection: get("EPSG:3857"),
-  resolution: res
+// Druckbereich, Maßstab 1 : 50.000
+var res = getResolutionFromScale(50000, DOTS_PER_INCH);
+const printSource = new VectorSource({
+  wrapX: false,
+  features: [],
 });
-
-console.log("Kontrolle Scale View " + mapScale(150, res));
-// TODO: Übergabe Druckbereich in Pixel
-const ext = newView.calculateExtent([300, 300]);
-console.log(ext);
-//var ext = map.getView().calculateExtent(map.getSize());
-const feature = new Feature({
-  'geometry': fromExtent(ext)
-});
-
-const vectorLayer = new VectorLayer({
-  source: new VectorSource({
-    wrapX: false,
-    features: [feature],
-  }),
+const printLayer = new VectorLayer({
+  source: printSource,
   style: new Style({
     stroke: new Stroke({
       color: 'rgba(255, 0, 0, 1.0)',
@@ -123,7 +110,30 @@ const vectorLayer = new VectorLayer({
     })
   })
 });
-map.addLayer(vectorLayer);
+map.addLayer(printLayer);
+
+function onMoveEnd(evt) {
+  console.log("MoveEnd");
+  printSource.clear();
+  console.log("Center " + map.getView().getCenter())
+  let newView = new View({
+    center: map.getView().getCenter(),
+    projection: get("EPSG:3857"),
+    resolution: res
+  });
+  
+  console.log("Kontrolle Scale View " + mapScale(DOTS_PER_INCH, res));
+  // TODO: Übergabe Druckbereich in Pixel
+  const ext = newView.calculateExtent([462, 445]);
+  console.log(ext);
+  //var ext = map.getView().calculateExtent(map.getSize());
+  const feature = new Feature({
+    'geometry': fromExtent(ext)
+  });
+  printSource.addFeature(feature);  
+}
+
+map.on('moveend', onMoveEnd);
 
 
 
