@@ -68,10 +68,10 @@ map.on('singleclick', function (evt) {
   popup.show(evt.coordinate, '<div><h2>Coordinates</h2><p>' + prettyCoord + '</p></div>');
 });
 
-console.log("DPI " + window.devicePixelRatio);
+console.log("DPI Factor " + window.devicePixelRatio);
 
 // DPI berechnen => Bildschirm abhängig
-var DOTS_PER_INCH = 96 * window.devicePixelRatio; // PixelRatio == 1
+var DOTS_PER_INCH = 96; // * window.devicePixelRatio; // PixelRatio == 1
 function getResolutionFromScale(scale, dpi) {
   var units = map.getView().getProjection().getUnits();
   var mpu = METERS_PER_UNIT[units];
