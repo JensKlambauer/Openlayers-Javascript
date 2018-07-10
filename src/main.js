@@ -3,6 +3,8 @@ import 'ol-layerswitcher/src/ol-layerswitcher.css';
 import 'ol-popup/src/ol-popup.css';
 import './styles.css';
 import PrintingMap, { DOTS_PER_INCH } from './Map';
+import GitHubRepos from './GitHubRepos';
+import PrintConfig from './DruckKonfig';
 
 
 ready(function () {
@@ -12,6 +14,16 @@ ready(function () {
 
   console.log(DOTS_PER_INCH);
   console.log("DPI Factor " + window.devicePixelRatio);
+
+  // var repos = new GitHubRepos();
+  // repos.list().catch(e => {console.error("Error"); console.error(e);})
+
+  (async function () {
+    var config = new PrintConfig();
+    var res = await config.listTemplates().catch(e => {console.error("Error"); console.error(e);});
+    console.log(JSON.parse(res));
+  })();
+   
 });
 
 function ready(callback) {
@@ -172,49 +184,7 @@ function ready(callback) {
 // }
 // console.log(app(4,5));
 
-// function request(url) {
-//   return new Promise(function (resolve, reject) {
-//     const xhr = new XMLHttpRequest();
-//     xhr.onreadystatechange = function (e) {
-//       if (xhr.readyState === 4) {
-//         if (xhr.status === 200) {
-//           resolve(xhr.response)
-//         } else {
-//           reject({
-//             status: this.status,
-//             statusText: xhr.statusText
-//           });
-//         }
-//       }
-//     }
-//     xhr.ontimeout = function () {
-//       reject('timeout')
-//     }
-//     xhr.open('get', url, true)
-//     xhr.send()
-//   })
-// }
 
-// function handleRepoList(user, repos) {
-//   const userRepos = JSON.parse(repos)
-
-//   // Handle each individual user repo here
-//   console.log(user, userRepos)
-// }
-
-// async function list() {
-//   const userGet = `https://api.github.com/search/users?page=1&q=jensklambauer&type=Users`;
-
-//   const users = await request(userGet);
-//   console.log(users)
-//   const usersList = JSON.parse(users).items;
-
-//   usersList.forEach(async function (user) {
-//     const repos = await request(user.repos_url)
-
-//     handleRepoList(user, repos)
-//   })
-// }
 
 // import WMTSCapabilities from 'ol/format/wmtscapabilities';
 // import WMSCapabilities from 'ol/format/wmscapabilities';
@@ -249,7 +219,7 @@ function ready(callback) {
 // });
 
 
-// list().catch(e => {console.error("Error"); console.error(e);})
+// 
 
 // async function list1() {
 //   const resp = await request('https://geodienste.sachsen.de/wms_geosn_dop-rgb/guest?REQUEST=GetCapabilities&SERVICE=WMS');
