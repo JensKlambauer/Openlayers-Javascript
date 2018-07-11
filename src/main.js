@@ -5,6 +5,7 @@ import './styles.css';
 import PrintingMap, { DOTS_PER_INCH } from './Map';
 import GitHubRepos from './GitHubRepos';
 import PrintConfig from './DruckKonfig';
+import WebApiConnection from './WebApiConnection';
 
 
 ready(function () {
@@ -18,12 +19,46 @@ ready(function () {
   // var repos = new GitHubRepos();
   // repos.list().catch(e => {console.error("Error"); console.error(e);})
 
-  (async function () {
-    var config = new PrintConfig();
-    var res = await config.listTemplates().catch(e => {console.error("Error"); console.error(e);});
-    console.log(JSON.parse(res));
-  })();
-   
+  // let templates = null;
+  // (async function () {
+  //   const webApiUrl = 'http://localhost:55555/Token';
+  //   const connection = new WebApiConnection(webApiUrl);
+  //   const tokens = await connection.getAccessToken();
+  //   console.log("Tokens");
+  //   console.log(tokens);
+  //   // const config = new PrintConfig();
+  //   // templates = await config.listTemplates().catch(e => { console.error("Fehler"); console.error(e); });
+  // })().then(() => {
+  //   // console.log("Templates");
+  //   // console.log(JSON.parse(templates));
+  // });
+
+  // var url = 'http://localhost:55555/Token';
+  // const loginData = {
+  //   grant_type: 'password',
+  //   username: 'admin@example.de',
+  //   password: 'Admin+1'
+  // };
+  // const xhr = new XMLHttpRequest();
+  // xhr.onreadystatechange = function (e) {
+  //   if (xhr.readyState === 4) {
+  //     if (xhr.status === 200) {
+  //       resolve(xhr.response)
+  //     } else {
+  //       reject({
+  //         status: this.status,
+  //         statusText: xhr.statusText
+  //       });
+  //     }
+  //   }
+  // }
+  // xhr.ontimeout = function () {
+  //   reject('timeout')
+  // }
+  // xhr.open("POST", url, true);  
+  // //xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+  // xhr.send(JSON.stringify(loginData));
+
 });
 
 function ready(callback) {
