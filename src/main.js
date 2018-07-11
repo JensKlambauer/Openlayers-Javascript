@@ -7,31 +7,42 @@ import GitHubRepos from './GitHubRepos';
 import PrintConfig from './DruckKonfig';
 import WebApiConnection from './WebApiConnection';
 
-
+let map = null;
 ready(function () {
   console.log("Karte ready!");
-  const map = new PrintingMap();
-  map.addPrintLayer();
-
+  map = new PrintingMap();
+  // map.addPrintLayer();
   console.log(DOTS_PER_INCH);
   console.log("DPI Factor " + window.devicePixelRatio);
+});
 
+document.querySelector("#Druckeinstellungen").addEventListener("click", (evt) => {
   let templates = null;
   (async function () {
     const webApiUrl = 'http://localhost:55555/Token';
     const connection = new WebApiConnection(webApiUrl);
     const tokens = await connection.getAccessToken();
     // console.log("Tokens");
-    // console.log(tokens['access_token']);
+    // console.log(tokens['access_token']);   
     const config = new PrintConfig(tokens['access_token']);
     templates = await config.listTemplates();
   })()
     .catch(e => { console.error("Fehler"); console.error(e); })
     .then(() => {
       console.log("Templates");
-      console.log(JSON.parse(templates));
-    });
+      let templ = JSON.parse(templates);
+      console.log(templ);
+      
+      map.addPrintLayer(50000, scaleToPixel(72, templ[0].ComposerMap[0].width), scaleToPixel(72, templ[0].ComposerMap[0].height));
+    }); 
+
+    document.querySelector("#Druckeinstellungen").innerHTML = "Drucken schliessen";
 });
+
+function scaleToPixel(dpi, value) {
+    const dim = parseInt(value);
+    return dpi * dim / 25.4;
+}
 
 function ready(callback) {
   // in case the document is already rendered
@@ -48,6 +59,23 @@ function ready(callback) {
   }
 }
 
+
+
+  // let templates = null;
+  // (async function () {
+  //   const webApiUrl = 'http://localhost:55555/Token';
+  //   const connection = new WebApiConnection(webApiUrl);
+  //   const tokens = await connection.getAccessToken();
+  //   // console.log("Tokens");
+  //   // console.log(tokens['access_token']);   
+  //   const config = new PrintConfig(tokens['access_token']);
+  //   templates = await config.listTemplates();
+  // })()
+  //   .catch(e => { console.error("Fehler"); console.error(e); })
+  //   .then(() => {
+  //     console.log("Templates");
+  //     console.log(JSON.parse(templates));
+  //   });
 
   // var url = 'http://localhost:55555/Token';
   // const loginData = {

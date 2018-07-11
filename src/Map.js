@@ -52,7 +52,7 @@ export default class PrintingMap {
                 zoom: 13,
             })
         });
-        console.log("map res " + this.map.getView().getResolution());
+        // console.log("map res " + this.map.getView().getResolution());
 
         var layerSwitcher = new LayerSwitcher({
             tipLabel: 'Legende' // Optional label for button
@@ -66,7 +66,9 @@ export default class PrintingMap {
             //alert("Test");
             var prettyCoord = toStringHDMS(transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326'), 2);
             popup.show(evt.coordinate, '<div><h2>Coordinates</h2><p>' + prettyCoord + '</p></div>');
-        });      
+        });   
+        
+        this.showPrintBox = false;
     }
 
     getResolutionFromScale(scale, dpi) {
@@ -85,9 +87,10 @@ export default class PrintingMap {
     }
 
     onMoveEnd(evt) {
-        console.log("MoveEnd");
-        this.printSource.clear();
-        console.log("Center " + this.map.getView().getCenter())
+        // console.log("MoveEnd");
+        this.printSource.clear();        
+        // console.log("Center " + this.map.getView().getCenter())
+       
         let newView = new View({
             center: this.map.getView().getCenter(),
             projection: get("EPSG:3857"),
@@ -96,16 +99,25 @@ export default class PrintingMap {
 
         console.log("Kontrolle Scale View " + this.mapScale(DOTS_PER_INCH, this.res));
         // TODO: Übergabe Druckbereich in Pixel
-        const ext = newView.calculateExtent([462, 445]);
+        const ext = newView.calculateExtent([this.width, this.height]);
         console.log(ext);
-        //var ext = map.getView().calculateExtent(map.getSize());
+        //var ext = this.map.getView().calculateExtent(this.map.getSize());
         const feature = new Feature({
             'geometry': fromExtent(ext)
         });
         this.printSource.addFeature(feature);
     }
 
-    addPrintLayer() {
+    addPrintLayer(scale, width, height) {        
+        if (this.showPrintBox === true) 
+        {
+            return;
+        }
+
+        this.scale = scale;
+        this.width = width;
+        this.height = height;
+
         this.printSource = new VectorSource({
             wrapX: false,
             features: [],
@@ -121,10 +133,18 @@ export default class PrintingMap {
             })
         });
         this.map.addLayer(this.printLayer);
-
-        this.res = this.getResolutionFromScale(50000, DOTS_PER_INCH);
+        
+        this.res = this.getResolutionFromScale(this.scale, DOTS_PER_INCH);
         this.map.on('moveend', (evt) => {
            this.onMoveEnd(evt);
         });
-    }    
+
+        this.showPrintBox = true;
+    } 
+    
+    removePrintLayer()
+    {
+        this.map.removeLayer(this.printLayer);
+        this.showPrintBox = false;
+    }
 }

@@ -29,7 +29,7 @@ export function PostRequest(url, data, token) {
     return new Promise(function (resolve, reject) {       
         var xhr = new XMLHttpRequest();
         xhr.open("POST", url, true);
-        xhr.setRequestHeader('Content-type','application/json;');        
+        xhr.setRequestHeader('Content-type','application/json; charset=utf-8');        
         xhr.onreadystatechange = function (e) {
             if (xhr.readyState === 4) {
                 if (xhr.status === 200) {

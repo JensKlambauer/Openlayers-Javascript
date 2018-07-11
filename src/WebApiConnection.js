@@ -17,4 +17,9 @@ export default class WebApiConnection {
         var access_tokens = await PostRequest(this.url, loginData);
         return JSON.parse(access_tokens);
     }
+
+    // async postStreckeDaten(data, token) {
+    //     let json = JSON.stringify(data);
+    //     await PostRequest("http://localhost:55555/api/v1/Print/Strecke", json, token);
+    // }
 }
