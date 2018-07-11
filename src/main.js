@@ -16,49 +16,21 @@ ready(function () {
   console.log(DOTS_PER_INCH);
   console.log("DPI Factor " + window.devicePixelRatio);
 
-  // var repos = new GitHubRepos();
-  // repos.list().catch(e => {console.error("Error"); console.error(e);})
-
-  // let templates = null;
-  // (async function () {
-  //   const webApiUrl = 'http://localhost:55555/Token';
-  //   const connection = new WebApiConnection(webApiUrl);
-  //   const tokens = await connection.getAccessToken();
-  //   console.log("Tokens");
-  //   console.log(tokens);
-  //   // const config = new PrintConfig();
-  //   // templates = await config.listTemplates().catch(e => { console.error("Fehler"); console.error(e); });
-  // })().then(() => {
-  //   // console.log("Templates");
-  //   // console.log(JSON.parse(templates));
-  // });
-
-  // var url = 'http://localhost:55555/Token';
-  // const loginData = {
-  //   grant_type: 'password',
-  //   username: 'admin@example.de',
-  //   password: 'Admin+1'
-  // };
-  // const xhr = new XMLHttpRequest();
-  // xhr.onreadystatechange = function (e) {
-  //   if (xhr.readyState === 4) {
-  //     if (xhr.status === 200) {
-  //       resolve(xhr.response)
-  //     } else {
-  //       reject({
-  //         status: this.status,
-  //         statusText: xhr.statusText
-  //       });
-  //     }
-  //   }
-  // }
-  // xhr.ontimeout = function () {
-  //   reject('timeout')
-  // }
-  // xhr.open("POST", url, true);  
-  // //xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
-  // xhr.send(JSON.stringify(loginData));
-
+  let templates = null;
+  (async function () {
+    const webApiUrl = 'http://localhost:55555/Token';
+    const connection = new WebApiConnection(webApiUrl);
+    const tokens = await connection.getAccessToken();
+    // console.log("Tokens");
+    // console.log(tokens['access_token']);
+    const config = new PrintConfig(tokens['access_token']);
+    templates = await config.listTemplates();
+  })()
+    .catch(e => { console.error("Fehler"); console.error(e); })
+    .then(() => {
+      console.log("Templates");
+      console.log(JSON.parse(templates));
+    });
 });
 
 function ready(callback) {
@@ -75,6 +47,25 @@ function ready(callback) {
     });
   }
 }
+
+
+  // var url = 'http://localhost:55555/Token';
+  // const loginData = {
+  //   grant_type: 'password',
+  //   username: 'admin@example.de',
+  //   password: 'Admin+1'
+  // };
+
+  // $.ajax({
+  //   type: 'POST',
+  //   url: url,
+  //   data: loginData,
+  //   async: true
+  // }).done(function (data) {
+  //   console.log(data);
+  // }).fail(function (jqXHR, textStatus) {
+  //   alert('login problem')
+  // });
 
 
 

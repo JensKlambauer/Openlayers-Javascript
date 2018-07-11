@@ -6,7 +6,7 @@ export default class PrintConfig {
     }
 
     async listTemplates() {
-        const apiUrl = `http://localhost:55555/api/v1/Print/ComposerTemplates`;
+        const apiUrl = `http://localhost:55555/api/v1/Print/ComposerTemplates`;        
         return await GetRequest(apiUrl, this.token);
     }
 }

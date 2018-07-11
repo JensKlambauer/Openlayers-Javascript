@@ -25,9 +25,11 @@ export function GetRequest(url, token) {
     })
 }
 
-export function PostRequest(url, data, token) {
-    return new Promise(function (resolve, reject) {
-        const xhr = new XMLHttpRequest();
+export function PostRequest(url, data, token) {    
+    return new Promise(function (resolve, reject) {       
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader('Content-type','application/json;');        
         xhr.onreadystatechange = function (e) {
             if (xhr.readyState === 4) {
                 if (xhr.status === 200) {
@@ -43,12 +45,16 @@ export function PostRequest(url, data, token) {
         xhr.ontimeout = function () {
             reject('timeout')
         }
-        xhr.open("POST", url, true);
         if(token)
         {
             xhr.setRequestHeader('Authorization', 'Bearer ' + token );
         }
-        xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
-        xhr.send(JSON.stringify(data));   
-    })
+        // xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); 
+        // xhr.setRequestHeader("Accept", "application/json");
+        // xhr.data = JSON.stringify(data);
+        // xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+        // xhr.send(data);   // JSON.stringify(data)
+        // xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.send(data);
+    });
 }
