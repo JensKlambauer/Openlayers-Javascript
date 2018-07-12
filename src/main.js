@@ -32,16 +32,35 @@ document.querySelector("#Druckeinstellungen").addEventListener("click", (evt) =>
       console.log("Templates");
       let templ = JSON.parse(templates);
       console.log(templ);
-      
       map.addPrintLayer(50000, scaleToPixel(72, templ[0].ComposerMap[0].width), scaleToPixel(72, templ[0].ComposerMap[0].height));
-    }); 
-
-    document.querySelector("#Druckeinstellungen").innerHTML = "Drucken schliessen";
+      addErgebnisLinks(templ);
+    });
 });
 
+function addErgebnisLinks(templates) {
+  // console.log(templates);
+  document.querySelector("#Druckformate").innerHTML = "";
+  if (!templates || templates.length === 0) {
+    document.querySelector("#Druckformate").innerHTML = '<option value="">Keine Templates vorhanden</option>';
+    return;
+  }
+  var opt = document.createElement("option");
+  opt.text = "Bitte Template auswählen";
+  opt.value = "";
+  var select = document.querySelector("#Druckformate");
+  select.appendChild(opt);
+
+  for (let template of templates) {
+    var option = document.createElement("option");
+    option.text = template.name;
+    option.value = template.name;
+    select.appendChild(option);
+  }
+}
+
 function scaleToPixel(dpi, value) {
-    const dim = parseInt(value);
-    return dpi * dim / 25.4;
+  const dim = parseInt(value);
+  return Math.round(dpi * dim / 25.4);
 }
 
 function ready(callback) {

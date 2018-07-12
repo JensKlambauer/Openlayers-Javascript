@@ -8,8 +8,8 @@ const devMode = process.env.NODE_ENV !== 'production'
 const root = path.resolve(__dirname);
 const dist = path.join(root, "dist");
 
-module.exports = {  
-  entry: { app: path.join(root, "src", "main.js")},  
+module.exports = {
+  entry: { app: path.join(root, "src", "main.js") },
   devtool: 'inline-source-map',
   // devtool: "source-map",
   module: {
@@ -27,9 +27,9 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-           ExtractCssChunks.loader,
-           "css-loader"
-         ]
+          ExtractCssChunks.loader,
+          "css-loader"
+        ]
       },
       {
         test: /\.html$/,
@@ -64,11 +64,14 @@ module.exports = {
         chunkFilename: "[id].css",
         hot: true // optional is the plguin cannot automatically detect if you are using HOT, not for production use
       }
-  ),
+    ),
     // new webpack.optimize.UglifyJsPlugin()
   ],
   devServer: {
     contentBase: path.join(__dirname, "dist"),
+    headers: {
+      'Access-Control-Allow-Origin': '*'
+    },
     // compress: true,
     port: 8099,
     inline: true,
