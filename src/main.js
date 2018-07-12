@@ -8,6 +8,7 @@ import PrintConfig from './DruckKonfig';
 import WebApiConnection from './WebApiConnection';
 
 let map = null;
+let templ = null;
 ready(function () {
   console.log("Karte ready!");
   map = new PrintingMap();
@@ -30,11 +31,18 @@ document.querySelector("#Druckeinstellungen").addEventListener("click", (evt) =>
     .catch(e => { console.error("Fehler"); console.error(e); })
     .then(() => {
       console.log("Templates");
-      let templ = JSON.parse(templates);
-      console.log(templ);
-      map.addPrintLayer(50000, scaleToPixel(72, templ[0].ComposerMap[0].width), scaleToPixel(72, templ[0].ComposerMap[0].height));
+      templ = JSON.parse(templates);
       addErgebnisLinks(templ);
     });
+});
+
+document.querySelector("#Druckformate").addEventListener("change", function() {
+  var elem = (typeof this.selectedIndex === "undefined" ? window.event.srcElement : this);
+  var value = elem.value || elem.options[elem.selectedIndex].value;
+  var selectTemplate = templ.find(x => x.name === value);
+  console.log(selectTemplate);
+  map.removePrintLayer();
+  map.addPrintLayer(50000, scaleToPixel(72, selectTemplate.ComposerMap[0].width), scaleToPixel(72, selectTemplate.ComposerMap[0].height)); 
 });
 
 function addErgebnisLinks(templates) {

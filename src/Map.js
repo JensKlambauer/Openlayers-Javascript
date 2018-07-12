@@ -1,4 +1,4 @@
-import { Map, View } from 'ol';
+import { Map, View, Observable } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 //import XYZ from 'ol/source/xyz';
@@ -20,6 +20,7 @@ import Feature from 'ol/Feature.js';
 import { defaults as defaultControls } from 'ol/control.js';
 import MousePosition from 'ol/control/MousePosition.js';
 import { createStringXY } from 'ol/coordinate.js';
+import { unByKey } from 'ol/Observable';
 
 const mousePositionControl = new MousePosition({
     coordinateFormat: createStringXY(4),
@@ -66,8 +67,8 @@ export default class PrintingMap {
             //alert("Test");
             var prettyCoord = toStringHDMS(transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326'), 2);
             popup.show(evt.coordinate, '<div><h2>Coordinates</h2><p>' + prettyCoord + '</p></div>');
-        });   
-        
+        });
+
         this.showPrintBox = false;
     }
 
@@ -88,17 +89,16 @@ export default class PrintingMap {
 
     onMoveEnd(evt) {
         // console.log("MoveEnd");
-        this.printSource.clear();        
+        this.printSource.clear();
         // console.log("Center " + this.map.getView().getCenter())
-       
+
         let newView = new View({
             center: this.map.getView().getCenter(),
             projection: get("EPSG:3857"),
             resolution: this.res
         });
 
-        console.log("Kontrolle Scale View " + this.mapScale(DOTS_PER_INCH, this.res));
-        // TODO: Übergabe Druckbereich in Pixel
+        // console.log("Kontrolle Scale View " + this.mapScale(DOTS_PER_INCH, this.res));       
         const ext = newView.calculateExtent([this.width, this.height]);
         console.log(ext);
         //var ext = this.map.getView().calculateExtent(this.map.getSize());
@@ -108,9 +108,8 @@ export default class PrintingMap {
         this.printSource.addFeature(feature);
     }
 
-    addPrintLayer(scale, width, height) {        
-        if (this.showPrintBox === true) 
-        {
+    addPrintLayer(scale, width, height) {
+        if (this.showPrintBox === true) {
             return;
         }
 
@@ -133,18 +132,24 @@ export default class PrintingMap {
             })
         });
         this.map.addLayer(this.printLayer);
-        
+
         this.res = this.getResolutionFromScale(this.scale, DOTS_PER_INCH);
-        this.map.on('moveend', (evt) => {
-           this.onMoveEnd(evt);
+        this.movendEvent = this.map.on('moveend', (evt) => {
+            this.onMoveEnd(evt);
         });
 
         this.showPrintBox = true;
-    } 
-    
-    removePrintLayer()
-    {
-        this.map.removeLayer(this.printLayer);
+        this.onMoveEnd();
+        // this.map.renderSync();
+    }
+
+    removePrintLayer() {
+        if (this.showPrintBox === true) { 
+            unByKey(this.movendEvent);  
+            this.map.removeLayer(this.printLayer);   
+            this.printSource = null;
+            this.printLayer = null;          
+        }           
         this.showPrintBox = false;
     }
 }
