@@ -9,8 +9,7 @@
             "request": "launch",
             "name": "Chrome",
             "url": "http://localhost:8099",
-            "webRoot": "${workspaceFolder}",
-            "runtimeArgs": ["--disable-web-security"]
+            "webRoot": "${workspaceFolder}"
         }
     ]
 }

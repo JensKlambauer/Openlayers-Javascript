@@ -72,6 +72,10 @@ export default class PrintingMap {
         this.showPrintBox = false;
     }
 
+    get extentsPrint() {
+        return  this.ext;
+      }
+
     getResolutionFromScale(scale, dpi) {
         var units = this.map.getView().getProjection().getUnits();
         var mpu = METERS_PER_UNIT[units];
@@ -99,11 +103,11 @@ export default class PrintingMap {
         });
 
         // console.log("Kontrolle Scale View " + this.mapScale(DOTS_PER_INCH, this.res));       
-        const ext = newView.calculateExtent([this.width, this.height]);
-        console.log(ext);
+        this.ext = newView.calculateExtent([this.width, this.height]);
+        // console.log(this.ext);
         //var ext = this.map.getView().calculateExtent(this.map.getSize());
         const feature = new Feature({
-            'geometry': fromExtent(ext)
+            'geometry': fromExtent(this.ext)
         });
         this.printSource.addFeature(feature);
     }

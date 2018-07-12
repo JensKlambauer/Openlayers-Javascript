@@ -3,12 +3,14 @@ import 'ol-layerswitcher/src/ol-layerswitcher.css';
 import 'ol-popup/src/ol-popup.css';
 import './styles.css';
 import PrintingMap, { DOTS_PER_INCH } from './Map';
-import GitHubRepos from './GitHubRepos';
+// import GitHubRepos from './GitHubRepos';
 import PrintConfig from './DruckKonfig';
 import WebApiConnection from './WebApiConnection';
+// import { PostRequest } from "./AjaxRequest";
 
 let map = null;
 let templ = null;
+let tokens = null;
 ready(function () {
   console.log("Karte ready!");
   map = new PrintingMap();
@@ -22,7 +24,7 @@ document.querySelector("#Druckeinstellungen").addEventListener("click", (evt) =>
   (async function () {
     const webApiUrl = 'http://localhost:55555/Token';
     const connection = new WebApiConnection(webApiUrl);
-    const tokens = await connection.getAccessToken();
+    tokens = await connection.getAccessToken();
     // console.log("Tokens");
     // console.log(tokens['access_token']);   
     const config = new PrintConfig(tokens['access_token']);
@@ -36,13 +38,25 @@ document.querySelector("#Druckeinstellungen").addEventListener("click", (evt) =>
     });
 });
 
-document.querySelector("#Druckformate").addEventListener("change", function() {
+document.querySelector("#Druckformate").addEventListener("change", function () {
   var elem = (typeof this.selectedIndex === "undefined" ? window.event.srcElement : this);
   var value = elem.value || elem.options[elem.selectedIndex].value;
   var selectTemplate = templ.find(x => x.name === value);
   console.log(selectTemplate);
   map.removePrintLayer();
-  map.addPrintLayer(50000, scaleToPixel(72, selectTemplate.ComposerMap[0].width), scaleToPixel(72, selectTemplate.ComposerMap[0].height)); 
+  map.addPrintLayer(50000, scaleToPixel(72, selectTemplate.ComposerMap[0].width), scaleToPixel(72, selectTemplate.ComposerMap[0].height));
+});
+
+document.querySelector("#KartenDruck").addEventListener("click", (evt) => {
+  // Extends von Druckrahmen
+  console.log(map.extentsPrint);
+  const data = { extends: map.extentsPrint, id_projekt: 1430 };
+  const json = JSON.stringify(data);
+  (async function () {    
+    const webApiUrl = 'http://localhost:55555/Token';
+    const connection = new WebApiConnection(webApiUrl);
+    connection.postPrintData(json, tokens['access_token']);
+  })();
 });
 
 function addErgebnisLinks(templates) {
