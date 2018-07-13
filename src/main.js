@@ -11,6 +11,9 @@ import WebApiConnection from './WebApiConnection';
 let map = null;
 let templ = null;
 let tokens = null;
+let scalesMap = null;
+let selectedTemplate = null;
+let selectedScale = null;
 ready(function () {
   console.log("Karte ready!");
   map = new PrintingMap();
@@ -21,6 +24,7 @@ ready(function () {
 
 document.querySelector("#Druckeinstellungen").addEventListener("click", (evt) => {
   let templates = null;
+  let scales = null;
   (async function () {
     const webApiUrl = 'http://localhost:55555/Token';
     const connection = new WebApiConnection(webApiUrl);
@@ -29,37 +33,58 @@ document.querySelector("#Druckeinstellungen").addEventListener("click", (evt) =>
     // console.log(tokens['access_token']);   
     const config = new PrintConfig(tokens['access_token']);
     templates = await config.listTemplates();
+    scales = await config.listMapScales();
   })()
     .catch(e => { console.error("Fehler"); console.error(e); })
     .then(() => {
       console.log("Templates");
       templ = JSON.parse(templates);
-      addErgebnisLinks(templ);
+      addTemplates(templ);
+      scalesMap = JSON.parse(scales);
+      addScales(scalesMap);
     });
 });
 
 document.querySelector("#Druckformate").addEventListener("change", function () {
   var elem = (typeof this.selectedIndex === "undefined" ? window.event.srcElement : this);
   var value = elem.value || elem.options[elem.selectedIndex].value;
-  var selectTemplate = templ.find(x => x.name === value);
-  console.log(selectTemplate);
+  selectedTemplate = templ.find(x => x.name === value);
+  console.log(selectedTemplate);
+  if (!selectedScale || !selectedTemplate) {
+    return;
+  }
+
   map.removePrintLayer();
-  map.addPrintLayer(50000, scaleToPixel(72, selectTemplate.ComposerMap[0].width), scaleToPixel(72, selectTemplate.ComposerMap[0].height));
+  map.addPrintLayer(50000, scaleToPixel(72, selectedTemplate.ComposerMap[0].width), scaleToPixel(72, selectedTemplate.ComposerMap[0].height));
+});
+
+document.querySelector("#Masstab").addEventListener("change", function () {
+  var elem = (typeof this.selectedIndex === "undefined" ? window.event.srcElement : this);
+  var value = elem.value || elem.options[elem.selectedIndex].value;
+  selectedScale = scalesMap.find(x => x === parseInt(value));
+  console.log(selectedScale);
+  if (!selectedScale || !selectedTemplate) {
+    return;
+  }
+  map.removePrintLayer();
+  map.addPrintLayer(selectedScale, scaleToPixel(72, selectedTemplate.ComposerMap[0].width), scaleToPixel(72, selectedTemplate.ComposerMap[0].height));
 });
 
 document.querySelector("#KartenDruck").addEventListener("click", (evt) => {
-  // Extends von Druckrahmen
+  // Extents von Druckrahmen
   console.log(map.extentsPrint);
-  const data = { extends: map.extentsPrint, id_projekt: 1430 };
-  const json = JSON.stringify(data);
-  (async function () {    
-    const webApiUrl = 'http://localhost:55555/Token';
+  if (!map.extentsPrint) {
+    return;
+  }
+  const data = { extents: map.extentsPrint, id_projekt: 1430, template: selectedTemplate.name, scale: selectedScale };
+  (async function () {
+    const webApiUrl = 'http://localhost:55555/api/v1/Print/PrintMap';
     const connection = new WebApiConnection(webApiUrl);
-    connection.postPrintData(json, tokens['access_token']);
+    await connection.postPrintData(data, tokens['access_token']);
   })();
 });
 
-function addErgebnisLinks(templates) {
+function addTemplates(templates) {
   // console.log(templates);
   document.querySelector("#Druckformate").innerHTML = "";
   if (!templates || templates.length === 0) {
@@ -76,6 +101,27 @@ function addErgebnisLinks(templates) {
     var option = document.createElement("option");
     option.text = template.name;
     option.value = template.name;
+    select.appendChild(option);
+  }
+}
+
+function addScales(scales) {
+  console.log(scales);
+  document.querySelector("#Masstab").innerHTML = "";
+  if (!scales || scales.length === 0) {
+    document.querySelector("#Masstab").innerHTML = '<option value="">Kein Maßstab vorhanden</option>';
+    return;
+  }
+  var opt = document.createElement("option");
+  opt.text = "Bitte Maßstab auswählen";
+  opt.value = "";
+  var select = document.querySelector("#Masstab");
+  select.appendChild(opt);
+
+  for (let scale of scales) {
+    var option = document.createElement("option");
+    option.text = scale;
+    option.value = scale;
     select.appendChild(option);
   }
 }
@@ -100,7 +146,8 @@ function ready(callback) {
   }
 }
 
-
+  // const data = { id: '1', id_wildart: '18', datum: '01.07.2018', ort: "Riesa"};
+  // connection.postStreckeDaten(data, tokens['access_token']);  
 
   // let templates = null;
   // (async function () {

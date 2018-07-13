@@ -9,4 +9,9 @@ export default class PrintConfig {
         const apiUrl = `http://localhost:55555/api/v1/Print/ComposerTemplates`;        
         return await GetRequest(apiUrl, this.token);
     }
+
+    async listMapScales() {
+        const apiUrl = `http://localhost:55555/api/v1/Print/GetScales`;        
+        return await GetRequest(apiUrl, this.token);
+    }
 }

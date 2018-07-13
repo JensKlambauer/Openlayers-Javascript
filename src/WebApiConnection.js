@@ -20,7 +20,7 @@ export default class WebApiConnection {
 
     async postPrintData(data, token) {
         let json = JSON.stringify(data);
-        await PostRequest("http://localhost:55555/api/v1/Print/PrintMap", json, token);
+        await PostRequest(this.url, json, token);
     }
 
     // async postStreckeDaten(data, token) {

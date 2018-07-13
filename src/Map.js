@@ -152,7 +152,8 @@ export default class PrintingMap {
             unByKey(this.movendEvent);  
             this.map.removeLayer(this.printLayer);   
             this.printSource = null;
-            this.printLayer = null;          
+            this.printLayer = null; 
+            this.ext = null;         
         }           
         this.showPrintBox = false;
     }
