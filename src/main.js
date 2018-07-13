@@ -3,11 +3,7 @@ import 'ol-layerswitcher/src/ol-layerswitcher.css';
 import 'ol-popup/src/ol-popup.css';
 import './styles.css';
 import PrintingMap, { DOTS_PER_INCH } from './Map';
-// import GitHubRepos from './GitHubRepos';
-// import PrintConfig from './PrintConfig';
-// import WebApiConnection from './WebApiConnection';
 import PrintService from './PrintService';
-// import { PostRequest } from "./AjaxRequest";
 
 let map = null;
 let templatesMap = null;
@@ -101,7 +97,7 @@ function addTemplates(templates) {
 }
 
 function addScales(scales) {
-  console.log(scales);
+  // console.log(scales);
   document.querySelector("#Masstab").innerHTML = "";
   if (!scales || scales.length === 0) {
     document.querySelector("#Masstab").innerHTML = '<option value="">Kein Maßstab vorhanden</option>';
