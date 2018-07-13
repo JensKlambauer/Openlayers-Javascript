@@ -4,20 +4,21 @@ import 'ol-popup/src/ol-popup.css';
 import './styles.css';
 import PrintingMap, { DOTS_PER_INCH } from './Map';
 // import GitHubRepos from './GitHubRepos';
-import PrintConfig from './DruckKonfig';
-import WebApiConnection from './WebApiConnection';
+// import PrintConfig from './PrintConfig';
+// import WebApiConnection from './WebApiConnection';
+import PrintService from './PrintService';
 // import { PostRequest } from "./AjaxRequest";
 
 let map = null;
-let templ = null;
-let tokens = null;
+let templatesMap = null;
 let scalesMap = null;
 let selectedTemplate = null;
 let selectedScale = null;
+let printService = null;
+
 ready(function () {
   console.log("Karte ready!");
-  map = new PrintingMap();
-  // map.addPrintLayer();
+  map = new PrintingMap();  
   console.log(DOTS_PER_INCH);
   console.log("DPI Factor " + window.devicePixelRatio);
 });
@@ -25,21 +26,17 @@ ready(function () {
 document.querySelector("#Druckeinstellungen").addEventListener("click", (evt) => {
   let templates = null;
   let scales = null;
-  (async function () {
-    const webApiUrl = 'http://localhost:55555/Token';
-    const connection = new WebApiConnection(webApiUrl);
-    tokens = await connection.getAccessToken();
-    // console.log("Tokens");
-    // console.log(tokens['access_token']);   
-    const config = new PrintConfig(tokens['access_token']);
-    templates = await config.listTemplates();
-    scales = await config.listMapScales();
+  (async function () {   
+    printService = new PrintService();
+    await printService.getApiAccessToken();
+    templates = await printService.getTemplates();
+    scales = await printService.getScales();
   })()
     .catch(e => { console.error("Fehler"); console.error(e); })
     .then(() => {
-      console.log("Templates");
-      templ = JSON.parse(templates);
-      addTemplates(templ);
+      // console.log("Templates");
+      templatesMap = JSON.parse(templates);
+      addTemplates(templatesMap);
       scalesMap = JSON.parse(scales);
       addScales(scalesMap);
     });
@@ -48,7 +45,7 @@ document.querySelector("#Druckeinstellungen").addEventListener("click", (evt) =>
 document.querySelector("#Druckformate").addEventListener("change", function () {
   var elem = (typeof this.selectedIndex === "undefined" ? window.event.srcElement : this);
   var value = elem.value || elem.options[elem.selectedIndex].value;
-  selectedTemplate = templ.find(x => x.name === value);
+  selectedTemplate = templatesMap.find(x => x.name === value);
   console.log(selectedTemplate);
   if (!selectedScale || !selectedTemplate) {
     return;
@@ -78,9 +75,7 @@ document.querySelector("#KartenDruck").addEventListener("click", (evt) => {
   }
   const data = { extents: map.extentsPrint, id_projekt: 1430, template: selectedTemplate.name, scale: selectedScale };
   (async function () {
-    const webApiUrl = 'http://localhost:55555/api/v1/Print/PrintMap';
-    const connection = new WebApiConnection(webApiUrl);
-    await connection.postPrintData(data, tokens['access_token']);
+    await  printService.postPrintData(data);
   })();
 });
 

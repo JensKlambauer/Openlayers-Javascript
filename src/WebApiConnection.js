@@ -5,6 +5,10 @@ export default class WebApiConnection {
         this.url = url;
     }
 
+    get tokenWebApi() {
+        return this.token;
+    }
+
     async getAccessToken() {
         // var loginData = {
         //     grant_type: 'password',
@@ -15,12 +19,12 @@ export default class WebApiConnection {
         var loginData = "grant_type=password&username=" + encodeURIComponent('admin@example.de')+ "&password=" + encodeURIComponent('Admin+1');
         // let json = JSON.stringify(loginData);
         var access_tokens = await PostRequest(this.url, loginData);
-        return JSON.parse(access_tokens);
+        this.token = JSON.parse(access_tokens);
     }
 
     async postPrintData(data, token) {
         let json = JSON.stringify(data);
-        await PostRequest(this.url, json, token);
+        await PostRequest('http://localhost:55555/api/v1/Print/PrintMap', json, token);
     }
 
     // async postStreckeDaten(data, token) {
