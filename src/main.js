@@ -4,17 +4,19 @@ import 'ol-popup/src/ol-popup.css';
 import './styles.css';
 import PrintingMap, { DOTS_PER_INCH } from './Map';
 import PrintService from './PrintService';
+import PrintData from './PrintData';
 
-let map = null;
+let map = new PrintingMap();
 let templatesMap = null;
 let scalesMap = null;
 let selectedTemplate = null;
 let selectedScale = null;
 let printService = null;
+let printData = new PrintData(1430);
 
 ready(function () {
   console.log("Karte ready!");
-  map = new PrintingMap();  
+  // map = new PrintingMap();
   console.log(DOTS_PER_INCH);
   console.log("DPI Factor " + window.devicePixelRatio);
 });
@@ -22,7 +24,7 @@ ready(function () {
 document.querySelector("#Druckeinstellungen").addEventListener("click", (evt) => {
   let templates = null;
   let scales = null;
-  (async function () {   
+  (async function () {
     printService = new PrintService();
     await printService.getApiAccessToken();
     templates = await printService.getTemplates();
@@ -43,12 +45,13 @@ document.querySelector("#Druckformate").addEventListener("change", function () {
   var value = elem.value || elem.options[elem.selectedIndex].value;
   selectedTemplate = templatesMap.find(x => x.name === value);
   console.log(selectedTemplate);
+  printData.set_template = selectedTemplate.name;
   if (!selectedScale || !selectedTemplate) {
     return;
   }
 
   map.removePrintLayer();
-  map.addPrintLayer(50000, scaleToPixel(72, selectedTemplate.ComposerMap[0].width), scaleToPixel(72, selectedTemplate.ComposerMap[0].height));
+  map.addPrintLayer(selectedScale, scaleToPixel(72, selectedTemplate.ComposerMap[0].width), scaleToPixel(72, selectedTemplate.ComposerMap[0].height));
 });
 
 document.querySelector("#Masstab").addEventListener("change", function () {
@@ -56,9 +59,11 @@ document.querySelector("#Masstab").addEventListener("change", function () {
   var value = elem.value || elem.options[elem.selectedIndex].value;
   selectedScale = scalesMap.find(x => x === parseInt(value));
   console.log(selectedScale);
+  printData.set_scale = selectedScale;
   if (!selectedScale || !selectedTemplate) {
     return;
   }
+  
   map.removePrintLayer();
   map.addPrintLayer(selectedScale, scaleToPixel(72, selectedTemplate.ComposerMap[0].width), scaleToPixel(72, selectedTemplate.ComposerMap[0].height));
 });
@@ -69,9 +74,10 @@ document.querySelector("#KartenDruck").addEventListener("click", (evt) => {
   if (!map.extentsPrint) {
     return;
   }
-  const data = { extents: map.extentsPrint, id_projekt: 1430, template: selectedTemplate.name, scale: selectedScale };
+  // const data = new PrintData(map.extentsPrint, 1430, selectedTemplate.name, selectedScale);
+  printData.set_extents = map.extentsPrint;
   (async function () {
-    await  printService.postPrintData(data);
+    await printService.postPrintData(printData.toJSON());
   })();
 });
 
@@ -88,12 +94,12 @@ function addTemplates(templates) {
   var select = document.querySelector("#Druckformate");
   select.appendChild(opt);
 
-  for (let template of templates) {
-    var option = document.createElement("option");
-    option.text = template.name;
-    option.value = template.name;
+  templates.forEach(obj => {
+    const option = document.createElement("option");
+    option.text = obj.name;
+    option.value = obj.name;
     select.appendChild(option);
-  }
+  });
 }
 
 function addScales(scales) {
@@ -109,12 +115,12 @@ function addScales(scales) {
   var select = document.querySelector("#Masstab");
   select.appendChild(opt);
 
-  for (let scale of scales) {
+  scales.forEach((obj) => {
     var option = document.createElement("option");
-    option.text = scale;
-    option.value = scale;
+    option.text = obj;
+    option.value = obj;
     select.appendChild(option);
-  }
+  });
 }
 
 function scaleToPixel(dpi, value) {
