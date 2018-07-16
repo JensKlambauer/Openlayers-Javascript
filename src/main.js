@@ -34,7 +34,7 @@ document.querySelector("#Druckeinstellungen").addEventListener("click", (evt) =>
     .then(() => {
       // console.log("Templates");
       templatesMap = JSON.parse(templates);
-      addTemplates(templatesMap);
+      addTemplates(templatesMap);     
       scalesMap = JSON.parse(scales);
       addScales(scalesMap);
     });
@@ -63,7 +63,7 @@ document.querySelector("#Masstab").addEventListener("change", function () {
   if (!selectedScale || !selectedTemplate) {
     return;
   }
-  
+
   map.removePrintLayer();
   map.addPrintLayer(selectedScale, scaleToPixel(72, selectedTemplate.ComposerMap[0].width), scaleToPixel(72, selectedTemplate.ComposerMap[0].height));
 });
@@ -94,10 +94,10 @@ function addTemplates(templates) {
   var select = document.querySelector("#Druckformate");
   select.appendChild(opt);
 
-  templates.forEach(obj => {
+  forEach(templates, (key, value, obj) => {
     const option = document.createElement("option");
-    option.text = obj.name;
-    option.value = obj.name;
+    option.text = value.name;
+    option.value = value.name;
     select.appendChild(option);
   });
 }
@@ -115,10 +115,10 @@ function addScales(scales) {
   var select = document.querySelector("#Masstab");
   select.appendChild(opt);
 
-  scales.forEach((obj) => {
-    var option = document.createElement("option");
-    option.text = obj;
-    option.value = obj;
+  forEach(scales, (key, value, obj) => {
+    const option = document.createElement("option");
+    option.text = value;
+    option.value = value;
     select.appendChild(option);
   });
 }
@@ -127,6 +127,15 @@ function scaleToPixel(dpi, value) {
   const dim = parseInt(value);
   return Math.round(dpi * dim / 25.4);
 }
+
+// forEach(obj, (key, value, obj ) => {
+//   console.log(key, value, obj );
+// });
+const forEach = function (obj, fn) {
+  for (const keyValuePair of Object.entries(obj)) {
+    fn(...keyValuePair, obj);
+  }
+};
 
 function ready(callback) {
   // in case the document is already rendered
