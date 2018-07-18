@@ -13,6 +13,7 @@ let selectedTemplate = null;
 let selectedScale = null;
 let printService = null;
 let printData = new PrintData(1430);
+let selectedDpi = 96;
 
 ready(function () {
   console.log("Karte ready!");
@@ -34,7 +35,7 @@ document.querySelector("#Druckeinstellungen").addEventListener("click", (evt) =>
     .then(() => {
       // console.log("Templates");
       templatesMap = JSON.parse(templates);
-      addTemplates(templatesMap);     
+      addTemplates(templatesMap);
       scalesMap = JSON.parse(scales);
       addScales(scalesMap);
     });
@@ -51,7 +52,12 @@ document.querySelector("#Druckformate").addEventListener("change", function () {
   }
 
   map.removePrintLayer();
-  map.addPrintLayer(selectedScale, scaleToPixel(72, selectedTemplate.ComposerMap[0].width), scaleToPixel(72, selectedTemplate.ComposerMap[0].height));
+  map.addPrintLayer(
+    selectedScale,
+    scaleToPixel(selectedDpi, selectedTemplate.ComposerMap[0].width),
+    scaleToPixel(selectedDpi, selectedTemplate.ComposerMap[0].height),
+    selectedDpi
+  );
 });
 
 document.querySelector("#Masstab").addEventListener("change", function () {
@@ -65,7 +71,12 @@ document.querySelector("#Masstab").addEventListener("change", function () {
   }
 
   map.removePrintLayer();
-  map.addPrintLayer(selectedScale, scaleToPixel(72, selectedTemplate.ComposerMap[0].width), scaleToPixel(72, selectedTemplate.ComposerMap[0].height));
+  map.addPrintLayer(
+    selectedScale,
+    scaleToPixel(selectedDpi, selectedTemplate.ComposerMap[0].width),
+    scaleToPixel(selectedDpi, selectedTemplate.ComposerMap[0].height),
+    selectedDpi
+  );
 });
 
 document.querySelector("#KartenDruck").addEventListener("click", (evt) => {

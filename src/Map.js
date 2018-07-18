@@ -93,8 +93,7 @@ export default class PrintingMap {
 
     onMoveEnd(evt) {
         // console.log("MoveEnd");
-        this.printSource.clear();
-        // console.log("Center " + this.map.getView().getCenter())
+        this.printSource.clear();       
 
         let newView = new View({
             center: this.map.getView().getCenter(),
@@ -104,7 +103,9 @@ export default class PrintingMap {
 
         // console.log("Kontrolle Scale View " + this.mapScale(DOTS_PER_INCH, this.res));       
         this.ext = newView.calculateExtent([this.width, this.height]);
-        // console.log(this.ext);
+        console.log("Center " + this.map.getView().getCenter())
+        console.log("width: " + this.width + " height: " + this.height);
+        console.log(this.ext);
         //var ext = this.map.getView().calculateExtent(this.map.getSize());
         const feature = new Feature({
             'geometry': fromExtent(this.ext)
@@ -112,7 +113,7 @@ export default class PrintingMap {
         this.printSource.addFeature(feature);
     }
 
-    addPrintLayer(scale, width, height) {
+    addPrintLayer(scale, width, height, dpi) {
         if (this.showPrintBox === true) {
             return;
         }
@@ -137,7 +138,7 @@ export default class PrintingMap {
         });
         this.map.addLayer(this.printLayer);
 
-        this.res = this.getResolutionFromScale(this.scale, DOTS_PER_INCH);
+        this.res = this.getResolutionFromScale(this.scale, dpi);
         this.movendEvent = this.map.on('moveend', (evt) => {
             this.onMoveEnd(evt);
         });
