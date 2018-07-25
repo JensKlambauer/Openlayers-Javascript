@@ -1,4 +1,5 @@
-import { Map, View, Observable } from 'ol';
+import Map from 'ol/Map.js';
+import View from 'ol/View.js';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 //import XYZ from 'ol/source/xyz';
@@ -22,7 +23,7 @@ import MousePosition from 'ol/control/MousePosition.js';
 import { createStringXY } from 'ol/coordinate.js';
 import { unByKey } from 'ol/Observable';
 import Select from 'ol/interaction/Select'
-import {click, pointerMove, altKeyOnly} from 'ol/events/condition.js';
+import { click, pointerMove, altKeyOnly } from 'ol/events/condition.js';
 
 const mousePositionControl = new MousePosition({
     coordinateFormat: createStringXY(4),
@@ -72,12 +73,16 @@ export default class PrintingMap {
         //     popup.show(evt.coordinate, '<div><h2>Coordinates</h2><p>' + prettyCoord + '</p></div>');
         // });
 
-        this.showPrintBox = false;        
+        this.showPrintBox = false;
     }
 
     get extentsPrint() {
-        return  this.ext;
-      }
+        return this.ext;
+    }
+
+    set printExtents(ext) {
+        this.ext = ext;
+    }
 
     getResolutionFromScale(scale, dpi) {
         var units = this.map.getView().getProjection().getUnits();
@@ -96,20 +101,19 @@ export default class PrintingMap {
 
     onMoveEnd(evt) {
         // console.log("MoveEnd");
-        this.printSource.clear(); 
+        this.printSource.clear();
         let center = this.map.getView().getCenter();
-        this.ext = this.getExtPrintView(center);
-        console.log("Center " + this.map.getView().getCenter())
+        let ext = this.getExtPrintView(center);
+        this.addFeaturePrint(ext);
+        // console.log("Center " + this.map.getView().getCenter())
         // console.log("width: " + this.width + " height: " + this.height);
         // console.log(this.ext);
 
         // Bounds Map        
-        //var ext = this.map.getView().calculateExtent(this.map.getSize());
-        
-        this.addFeaturePrint(this.ext);
+        //var ext = this.map.getView().calculateExtent(this.map.getSize());        
 
         // TODO: Code für Raster/Gitter        
-        let ext1 = this.getExtPrintView([center[0] + (this.ext[2] - this.ext[0]), center[1]])
+        let ext1 = this.getExtPrintView([center[0] + (ext[2] - ext[0]), center[1]])
         // console.log(ext1);
         this.addFeaturePrint(ext1);
     }
@@ -128,14 +132,19 @@ export default class PrintingMap {
             features: [],
         });
 
+        let style = new Style({
+            stroke: new Stroke({
+                color: 'rgba(255, 0, 0, 1.0)',
+                width: 2
+            }),
+            fill: new Fill({
+                color: 'rgba(255, 0, 0, 0.1)'
+            })
+        });
+
         this.printLayer = new VectorLayer({
             source: this.printSource,
-            style: new Style({
-                stroke: new Stroke({
-                    color: 'rgba(255, 0, 0, 1.0)',
-                    width: 2
-                })
-            })
+            style: style
         });
         this.map.addLayer(this.printLayer);
 
@@ -145,7 +154,7 @@ export default class PrintingMap {
         });
 
         this.showPrintBox = true;
-        let select = new Select({
+        this.select = new Select({
             condition: click,
             //layers: function (layer) {
             //    return /* some logic on layer to decide if its features should be considered; return true if yes */;
@@ -156,44 +165,33 @@ export default class PrintingMap {
             // }
         });
 
-        //this.map.removeInteraction(select);
-        this.map.addInteraction(select);
+        this.map.addInteraction(this.select);
         // https://openlayers.org/en/latest/examples/hit-tolerance.html
-        this.map.on('singleclick', function(e) {
-            var hit = false;
-            this.map.forEachFeatureAtPixel(e.pixel, function() {
-              hit = true;
-            }, {
-              hitTolerance: hitTolerance
+        this.featureClick = this.map.on('singleclick', (e) => {
+            let hit = false;
+            let featureHit = null;
+            this.map.forEachFeatureAtPixel(e.pixel, function (feature, layer) {
+                hit = true;
+                featureHit = feature;
+                // console.log(feature);
             });
             if (hit) {
-              style.getStroke().setColor('green');
-            } else {
-              style.getStroke().setColor('black');
+               this.printExtents = featureHit.getGeometry().getExtent();
             }
-            feature.changed();
-          });
-        // select.on('select', function(evt) {
-        //     console.log("Klick");
-        //     this.map.forEachFeatureAtPixel(evt.pixel,
-        //         function(feature, layer) {
-        //             if (layer === this.printLayer) {                      
-        //                 console.log("printLayer");
-        //             }});
-        // });
-
+        });
         this.onMoveEnd();
-        // this.map.renderSync();
     }
 
     removePrintLayer() {
-        if (this.showPrintBox === true) { 
-            unByKey(this.movendEvent);  
-            this.map.removeLayer(this.printLayer);   
+        if (this.showPrintBox === true) {
+            unByKey(this.movendEvent);
+            this.map.removeLayer(this.printLayer);
             this.printSource = null;
-            this.printLayer = null; 
-            this.ext = null;         
-        }           
+            this.printLayer = null;
+            this.ext = null;
+            this.map.removeInteraction(this.select);
+            unByKey(this.featureClick);
+        }
         this.showPrintBox = false;
     }
 
@@ -212,7 +210,7 @@ export default class PrintingMap {
         const feature = new Feature({
             'geometry': fromExtent(extents)
         });
-        console.log(feature);
+        // console.log(feature);
         this.printSource.addFeature(feature);
     }
 }
