@@ -107,15 +107,78 @@ export default class PrintingMap {
         this.addFeaturePrint(ext);
         // console.log("Center " + this.map.getView().getCenter())
         // console.log("width: " + this.width + " height: " + this.height);
-        // console.log(this.ext);
+        console.log(this.map.getSize());
+        let bounds = this.map.getView().calculateExtent(this.map.getSize());
 
         // Bounds Map        
         //var ext = this.map.getView().calculateExtent(this.map.getSize());        
 
-        // TODO: Code für Raster/Gitter        
-        let ext1 = this.getExtPrintView([center[0] + (ext[2] - ext[0]), center[1]])
-        // console.log(ext1);
-        this.addFeaturePrint(ext1);
+        // TODO: Code für Raster/Gitter  
+        let breite = center[0];
+        let hoehe = center[1];
+        while(hoehe < bounds[3] )   
+        {      
+            const ext1 = this.getExtPrintView([center[0], hoehe + (ext[3] - ext[1])])
+            this.addFeaturePrint(ext1);
+            hoehe = hoehe + (ext[3] - ext[1]);
+        }
+        hoehe = center[1];
+        while(hoehe > bounds[0] )   
+        {      
+            const ext1 = this.getExtPrintView([center[0], hoehe - (ext[3] - ext[1])])
+            this.addFeaturePrint(ext1);
+            hoehe = hoehe - (ext[3] - ext[1]);
+        }
+        
+        breite = center[0];
+        hoehe = center[1];  
+        while(breite < bounds[2] )   
+        {    
+            const ext1 = this.getExtPrintView([breite + (ext[2] - ext[0]), center[1]])
+            this.addFeaturePrint(ext1);
+            breite = breite + (ext[2] - ext[0]);
+            
+            hoehe = center[1];  
+            while(hoehe < bounds[3] )   
+            {      
+                const ext1 = this.getExtPrintView([breite, hoehe + (ext[3] - ext[1])])
+                this.addFeaturePrint(ext1);
+                hoehe = hoehe + (ext[3] - ext[1]);
+            }
+
+            hoehe = center[1];
+            while(hoehe > bounds[0] )   
+            {      
+                const ext1 = this.getExtPrintView([breite, hoehe - (ext[3] - ext[1])])
+                this.addFeaturePrint(ext1);
+                hoehe = hoehe - (ext[3] - ext[1]);
+            }  
+        } 
+
+        breite = center[0];
+        while(breite > bounds[0] )   
+        { 
+            const ext1 = this.getExtPrintView([breite - (ext[2] - ext[0]), center[1]])
+            this.addFeaturePrint(ext1);
+            breite = breite - (ext[2] - ext[0]);
+
+            hoehe = center[1];  
+            while(hoehe < bounds[3] )   
+            {      
+                const ext1 = this.getExtPrintView([breite, hoehe + (ext[3] - ext[1])])
+                this.addFeaturePrint(ext1);
+                hoehe = hoehe + (ext[3] - ext[1]);
+            }
+
+            hoehe = center[1];
+            while(hoehe > bounds[0] )   
+            {      
+                const ext1 = this.getExtPrintView([breite, hoehe - (ext[3] - ext[1])])
+                this.addFeaturePrint(ext1);
+                hoehe = hoehe - (ext[3] - ext[1]);
+            }  
+        }        
+       
     }
 
     addPrintLayer(scale, width, height, dpi) {

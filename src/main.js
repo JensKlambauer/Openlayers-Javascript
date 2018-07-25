@@ -86,10 +86,10 @@ document.querySelector("#KartenDruck").addEventListener("click", (evt) => {
     return;
   }
   // const data = new PrintData(map.extentsPrint, 1430, selectedTemplate.name, selectedScale);
-  printData.set_extents = map.extentsPrint;
-  (async function () {
-    await printService.postPrintData(printData.toJSON());
-  })();
+  // printData.set_extents = map.extentsPrint;
+  // (async function () {
+  //   await printService.postPrintData(printData.toJSON());
+  // })();
 });
 
 function addTemplates(templates) {
