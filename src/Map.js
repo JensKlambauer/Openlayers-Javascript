@@ -16,7 +16,7 @@ import VectorSource from 'ol/source/Vector.js';
 // import Polygon from 'ol/geom/Polygon';
 // import * as ol from 'ol';
 import { fromExtent } from 'ol/geom/Polygon.js';
-import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style.js';
+import { Circle as CircleStyle, Fill, Stroke, Style, Text } from 'ol/style.js';
 import Feature from 'ol/Feature.js';
 import { defaults as defaultControls } from 'ol/control.js';
 import MousePosition from 'ol/control/MousePosition.js';
@@ -84,6 +84,16 @@ export default class PrintingMap {
         this.ext = ext;
     }
 
+    get selectedPrintFeatures() {
+        const selFeats = this.select.getFeatures();
+        const extents = [];
+        selFeats.forEach((feature) => {
+            extents.push(feature.getGeometry().getExtent());
+        });
+
+        return extents;
+    }
+
     getResolutionFromScale(scale, dpi) {
         var units = this.map.getView().getProjection().getUnits();
         var mpu = METERS_PER_UNIT[units];
@@ -100,85 +110,69 @@ export default class PrintingMap {
     }
 
     onMoveEnd(evt) {
-        // console.log("MoveEnd");
+        // console.log("MoveEnd");        
+        this.select.getFeatures().clear();
         this.printSource.clear();
         let center = this.map.getView().getCenter();
         let ext = this.getExtPrintView(center);
-        this.addFeaturePrint(ext);
+        // this.addFeaturePrint(ext);
         // console.log("Center " + this.map.getView().getCenter())
         // console.log("width: " + this.width + " height: " + this.height);
         console.log(this.map.getSize());
         let bounds = this.map.getView().calculateExtent(this.map.getSize());
 
         // Bounds Map        
-        //var ext = this.map.getView().calculateExtent(this.map.getSize());        
+        //var ext = this.map.getView().calculateExtent(this.map.getSize()); 
 
-        // TODO: Code für Raster/Gitter  
+
+        this.featureCount = 0;
         let breite = center[0];
         let hoehe = center[1];
-        while(hoehe < bounds[3] )   
-        {      
-            const ext1 = this.getExtPrintView([center[0], hoehe + (ext[3] - ext[1])])
-            this.addFeaturePrint(ext1);
+        while (hoehe < bounds[3]) {
+            while (breite < bounds[2]) {
+                const extb = this.getExtPrintView([breite, hoehe])
+                this.addFeaturePrint(extb);
+                breite = breite + (ext[2] - ext[0]);
+            }
             hoehe = hoehe + (ext[3] - ext[1]);
+            breite = center[0];
         }
+
+        breite = center[0];
         hoehe = center[1];
-        while(hoehe > bounds[0] )   
-        {      
-            const ext1 = this.getExtPrintView([center[0], hoehe - (ext[3] - ext[1])])
-            this.addFeaturePrint(ext1);
-            hoehe = hoehe - (ext[3] - ext[1]);
+        while (hoehe < bounds[3]) {
+            while (breite > bounds[0]) {
+                const ext1 = this.getExtPrintView([breite - (ext[2] - ext[0]), hoehe])
+                this.addFeaturePrint(ext1);
+                breite = breite - (ext[2] - ext[0]);
+            }
+            hoehe = hoehe + (ext[3] - ext[1]);
+            breite = center[0];
         }
-        
-        breite = center[0];
-        hoehe = center[1];  
-        while(breite < bounds[2] )   
-        {    
-            const ext1 = this.getExtPrintView([breite + (ext[2] - ext[0]), center[1]])
-            this.addFeaturePrint(ext1);
-            breite = breite + (ext[2] - ext[0]);
-            
-            hoehe = center[1];  
-            while(hoehe < bounds[3] )   
-            {      
-                const ext1 = this.getExtPrintView([breite, hoehe + (ext[3] - ext[1])])
-                this.addFeaturePrint(ext1);
-                hoehe = hoehe + (ext[3] - ext[1]);
-            }
-
-            hoehe = center[1];
-            while(hoehe > bounds[0] )   
-            {      
-                const ext1 = this.getExtPrintView([breite, hoehe - (ext[3] - ext[1])])
-                this.addFeaturePrint(ext1);
-                hoehe = hoehe - (ext[3] - ext[1]);
-            }  
-        } 
 
         breite = center[0];
-        while(breite > bounds[0] )   
-        { 
-            const ext1 = this.getExtPrintView([breite - (ext[2] - ext[0]), center[1]])
-            this.addFeaturePrint(ext1);
-            breite = breite - (ext[2] - ext[0]);
-
-            hoehe = center[1];  
-            while(hoehe < bounds[3] )   
-            {      
-                const ext1 = this.getExtPrintView([breite, hoehe + (ext[3] - ext[1])])
-                this.addFeaturePrint(ext1);
-                hoehe = hoehe + (ext[3] - ext[1]);
+        hoehe = center[1];
+        while (hoehe > bounds[1]) {
+            while (breite < bounds[2]) {
+                const extb = this.getExtPrintView([breite, hoehe - (ext[3] - ext[1])])
+                this.addFeaturePrint(extb);
+                breite = breite + (ext[2] - ext[0]);
             }
+            hoehe = hoehe - (ext[3] - ext[1]);
+            breite = center[0];
+        }
 
-            hoehe = center[1];
-            while(hoehe > bounds[0] )   
-            {      
-                const ext1 = this.getExtPrintView([breite, hoehe - (ext[3] - ext[1])])
+        breite = center[0];
+        hoehe = center[1];
+        while (hoehe > bounds[1]) {
+            while (breite > bounds[0]) {
+                const ext1 = this.getExtPrintView([breite - (ext[2] - ext[0]), hoehe - (ext[3] - ext[1])])
                 this.addFeaturePrint(ext1);
-                hoehe = hoehe - (ext[3] - ext[1]);
-            }  
-        }        
-       
+                breite = breite - (ext[2] - ext[0]);
+            }
+            hoehe = hoehe - (ext[3] - ext[1]);
+            breite = center[0];
+        }
     }
 
     addPrintLayer(scale, width, height, dpi) {
@@ -195,19 +189,28 @@ export default class PrintingMap {
             features: [],
         });
 
-        let style = new Style({
-            stroke: new Stroke({
-                color: 'rgba(255, 0, 0, 1.0)',
-                width: 2
-            }),
-            fill: new Fill({
-                color: 'rgba(255, 0, 0, 0.1)'
-            })
-        });
-
         this.printLayer = new VectorLayer({
             source: this.printSource,
-            style: style
+            style: function (feature) {
+                let featId = feature.getId();
+                let style = new Style({
+                    stroke: new Stroke({
+                        color: 'rgba(255, 0, 0, 1.0)',
+                        width: 2
+                    }),
+                    fill: new Fill({
+                        color: 'rgba(255, 0, 0, 0.1)'
+                    }),
+                    text: new Text({
+                        text: featId.toString(),
+                        font: "Bold " + 14 + 'px sans-serif',
+                        fill: new Fill({
+                            color: '#000'
+                        })
+                    })
+                });
+                return style;
+            }
         });
         this.map.addLayer(this.printLayer);
 
@@ -230,18 +233,18 @@ export default class PrintingMap {
 
         this.map.addInteraction(this.select);
         // https://openlayers.org/en/latest/examples/hit-tolerance.html
-        this.featureClick = this.map.on('singleclick', (e) => {
-            let hit = false;
-            let featureHit = null;
-            this.map.forEachFeatureAtPixel(e.pixel, function (feature, layer) {
-                hit = true;
-                featureHit = feature;
-                // console.log(feature);
-            });
-            if (hit) {
-               this.printExtents = featureHit.getGeometry().getExtent();
-            }
-        });
+        // this.featureClick = this.map.on('singleclick', (e) => {
+        //     let hit = false;
+        //     let featureHit = null;
+        //     this.map.forEachFeatureAtPixel(e.pixel, function (feature, layer) {
+        //         hit = true;
+        //         featureHit = feature;
+        //         // console.log(feature);
+        //     });
+        //     if (hit) {
+        //         this.printExtents = featureHit.getGeometry().getExtent();
+        //     }
+        // });
         this.onMoveEnd();
     }
 
@@ -273,7 +276,9 @@ export default class PrintingMap {
         const feature = new Feature({
             'geometry': fromExtent(extents)
         });
-        // console.log(feature);
+        feature.setId(this.featureCount);
+        this.featureCount++;
+        console.log(this.featureCount);
         this.printSource.addFeature(feature);
     }
 }

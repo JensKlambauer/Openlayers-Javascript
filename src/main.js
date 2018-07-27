@@ -85,6 +85,7 @@ document.querySelector("#KartenDruck").addEventListener("click", (evt) => {
   if (!map.extentsPrint) {
     return;
   }
+  console.log(map.selectedPrintFeatures);
   // const data = new PrintData(map.extentsPrint, 1430, selectedTemplate.name, selectedScale);
   // printData.set_extents = map.extentsPrint;
   // (async function () {
