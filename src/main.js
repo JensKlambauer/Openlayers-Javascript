@@ -84,10 +84,10 @@ document.querySelector("#KartenDruck").addEventListener("click", (evt) => {
   // console.log(map.selectedPrintFeatures);
   if (!map.selectedPrintFeatures) {
     return;
-  }  
+  }
   // console.log(map.extentsPrint);
   let printDataArr = [];
-  map.selectedPrintFeatures.forEach((printExt) => {  
+  map.selectedPrintFeatures.forEach((printExt) => {
     printData.set_extents = printExt;
     printDataArr.push(printData.toJSON());
   });
@@ -95,7 +95,11 @@ document.querySelector("#KartenDruck").addEventListener("click", (evt) => {
   // console.log(printDataArr);
   (async function () {
     await printService.postPrintData(printDataArr);
-  })();
+  })()
+    .then(() => {
+      alert("Erfolgreich - Druck abgeschlossen")
+    })
+    .catch(e => { alert("Fehler beim Drucken"); console.error(e); });
 });
 
 function addTemplates(templates) {
