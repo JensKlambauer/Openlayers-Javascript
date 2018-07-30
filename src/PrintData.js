@@ -1,23 +1,30 @@
-export default class PrintData {  
+export default class PrintData {
     constructor(id_projekt) {
         this.id_projekt = id_projekt;
     }
-    // constructor(extents, id_projekt, template, scale) {
-    //     this.extents = extents;
-    //     this.id_projekt = id_projekt;
-    //     this.template = template;
-    //     this.scale = scale;
-    // }
 
-    set set_extents (extents) {
+    get get_idProjekt() {
+        return this.id_projekt;
+    }
+
+    get get_template() {
+        return this.template;
+    }
+
+    get get_scale() {
+        return this.scale;
+    }
+
+    set set_extents(extents) {
+        this.extents = null;
         this.extents = extents;
     }
 
-    set set_template (template) {
+    set set_template(template) {
         this.template = template;
     }
 
-    set set_scale (scale) {
+    set set_scale(scale) {
         this.scale = scale;
     }
 
@@ -28,5 +35,5 @@ export default class PrintData {
             template: this.template,
             scale: this.scale
         }
-      }
+    }
 }

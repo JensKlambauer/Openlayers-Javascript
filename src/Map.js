@@ -204,6 +204,7 @@ export default class PrintingMap {
                     text: new Text({
                         text: featId.toString(),
                         font: "Bold " + 14 + 'px sans-serif',
+                        stroke: new Stroke({color: "#fff", width: 5}),
                         fill: new Fill({
                             color: '#000'
                         })
@@ -278,7 +279,7 @@ export default class PrintingMap {
         });
         feature.setId(this.featureCount);
         this.featureCount++;
-        console.log(this.featureCount);
+        // console.log(this.featureCount);
         this.printSource.addFeature(feature);
     }
 }

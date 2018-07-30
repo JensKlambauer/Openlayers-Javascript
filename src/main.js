@@ -80,17 +80,22 @@ document.querySelector("#Masstab").addEventListener("change", function () {
 });
 
 document.querySelector("#KartenDruck").addEventListener("click", (evt) => {
-  // Extents von Druckrahmen
-  console.log(map.extentsPrint);
-  if (!map.extentsPrint) {
+  // Extents von Druckrahmen  
+  // console.log(map.selectedPrintFeatures);
+  if (!map.selectedPrintFeatures) {
     return;
-  }
-  console.log(map.selectedPrintFeatures);
-  // const data = new PrintData(map.extentsPrint, 1430, selectedTemplate.name, selectedScale);
-  // printData.set_extents = map.extentsPrint;
-  // (async function () {
-  //   await printService.postPrintData(printData.toJSON());
-  // })();
+  }  
+  // console.log(map.extentsPrint);
+  let printDataArr = [];
+  map.selectedPrintFeatures.forEach((printExt) => {  
+    printData.set_extents = printExt;
+    printDataArr.push(printData.toJSON());
+  });
+
+  // console.log(printDataArr);
+  (async function () {
+    await printService.postPrintData(printDataArr);
+  })();
 });
 
 function addTemplates(templates) {
