@@ -13,6 +13,7 @@
   "repository": "https://github.com/JensKlambauer/Openlayers-Javascript.git",
   "license": "MIT",
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
     "babel-runtime": "^6.26.0",
     "ol": "^5.1.3",
     "ol-layerswitcher": "^2.0.0",

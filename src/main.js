@@ -2,6 +2,7 @@ import 'ol/ol.css';
 import 'ol-layerswitcher/src/ol-layerswitcher.css';
 import 'ol-popup/src/ol-popup.css';
 import './styles.css';
+// import 'babel-polyfill';
 import PrintingMap, { DOTS_PER_INCH } from './Map';
 import PrintService from './PrintService';
 import PrintData from './PrintData';

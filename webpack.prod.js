@@ -10,25 +10,30 @@ const root = path.resolve(__dirname);
 const dist = path.join(root, "prod");
 
 module.exports = {
-  entry: { app: path.join(root, "src", "main.js") },
-//   devtool: 'inline-source-map',
+  entry: {
+    'babel-polyfill': ['babel-polyfill'],
+    app: path.join(root, "src", "main.js")
+  },
+  devtool: 'source-map',
   module: {
     rules: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader",
-          // options: {
-          //   presets: ["env"]
-          // }
+          loader: "babel-loader"
         }
       },
       {
         test: /\.css$/,
         use: [
           ExtractCssChunks.loader,
-          "css-loader"
+          {
+            loader: 'css-loader',
+            options: {
+              minimize: true
+            }
+          },
         ]
       },
       {
@@ -44,10 +49,7 @@ module.exports = {
   },
   output: {
     path: dist,
-    filename: "[name].js",
-    // library: 'karte',
-    // libraryTarget: 'var',
-    // libraryExport: 'default'
+    filename: "[name].js"
   },
   plugins: [
     new webpack.NamedModulesPlugin(),
@@ -60,7 +62,7 @@ module.exports = {
         // Options similar to the same options in webpackOptions.output
         // both options are optional
         filename: "[name].css",
-        chunkFilename: "[id].css"        
+        chunkFilename: "[id].css"
       }
     )
   ],
