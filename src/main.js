@@ -16,8 +16,7 @@ let printData = new PrintData(1430);
 let selectedDpi = 96;
 
 ready(function () {
-  console.log("Karte ready!");
-  // map = new PrintingMap();
+  console.log("Karte ready!");  
   console.log(DOTS_PER_INCH);
   console.log("DPI Factor " + window.devicePixelRatio);
 });
@@ -30,15 +29,15 @@ document.querySelector("#Druckeinstellungen").addEventListener("click", (evt) =>
     await printService.getApiAccessToken();
     templates = await printService.getTemplates();
     scales = await printService.getScales();
-  })()
-    .catch(e => { console.error("Fehler"); console.error(e); })
+  })()    
     .then(() => {
       // console.log("Templates");
       templatesMap = JSON.parse(templates);
       addTemplates(templatesMap);
       scalesMap = JSON.parse(scales);
       addScales(scalesMap);
-    });
+    })
+    .catch(e => { alert("Fehler - Verbindung mit Server"); console.error(e); });
 });
 
 document.querySelector("#Druckformate").addEventListener("change", function () {

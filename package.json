@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "description": "Openlayers 4.65",
   "scripts": {
-    "start": "webpack && webpack-dev-server --mode production",
+    "start": "webpack --mode production --config webpack.prod.js",
     "build": "echo 'Building...' && webpack --mode development",
     "dev-server": "webpack-dev-server --mode development",
     "watch": "./node_modules/.bin/webpack-dev-server --port 8182 --mode development --hot"
@@ -28,7 +28,8 @@
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
     "style-loader": "^0.21.0",
-    "webpack": "^4.16.3",
+    "uglifyjs-webpack-plugin": "^1.2.7",
+    "webpack": "^4.16.4",
     "webpack-cli": "^3.1.0",
     "webpack-dev-middleware": "^3.1.3",
     "webpack-dev-server": "^3.1.5",
