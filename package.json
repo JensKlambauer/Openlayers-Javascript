@@ -16,8 +16,8 @@
     "babel-polyfill": "^6.26.0",
     "babel-runtime": "^6.26.0",
     "ol": "^5.1.3",
-    "ol-layerswitcher": "^2.0.0",
-    "ol-popup": "^3.0.0"
+    "ol-layerswitcher": "git+https://github.com/walkermatt/ol-layerswitcher.git#ol5",
+    "ol-popup": "git+https://github.com/walkermatt/ol-popup.git#ol5"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
@@ -30,7 +30,7 @@
     "html-webpack-plugin": "^3.2.0",
     "style-loader": "^0.21.0",
     "uglifyjs-webpack-plugin": "^1.2.7",
-    "webpack": "^4.16.4",
+    "webpack": "^4.16.5",
     "webpack-cli": "^3.1.0",
     "webpack-dev-middleware": "^3.1.3",
     "webpack-dev-server": "^3.1.5",
