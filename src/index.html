@@ -1,24 +1,31 @@
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta http-equiv="Content-Security-Policy" content="default-src *; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'; media-src *; img-src * filesystem: data:">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta http-equiv="Content-Security-Policy" content="default-src *; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'; media-src *; img-src * filesystem: data:">
 
-    <title>Using OpenLayers with Webpack</title>  
-    <!-- <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script> -->
-  </head>
-  <body>
-      <div id="druckconfig">
-          <input type="button" value="Drucken öffnen" class="" id="Druckeinstellungen" title="Beim Aktivieren der Druckeinstellungen sind die Tooltips in der Karte deaktiviert" />
-          <select class="" id="Druckformate" title="Druckformate auswählen">
-            <option value="">Bitte auswählen</option>
-          </select>
-          <select class="" id="Masstab" title="Masstab auswählen">
-            <option value="">Bitte auswählen</option>
-          </select>
-          <input type="button" value="Karte drucken" class="" id="KartenDruck" title="Karte drucken" />
-      </div>
-    <div id="map"></div>
-  </body>
+  <title>OpenLayers 5 with Webpack</title>
+</head>
+
+<body>
+  <!-- Test Inputs Hidden-->
+  <input id="IdProjekt" name="IdProjekt" value="1430" type="hidden">
+  <input id="Position" name="Position" value="POINT(12.2958 50.6231)" type="hidden">
+  <input id="Zoom" name="Zoom" value="14" type="hidden">
+
+  <div id="druckconfig">
+    <input type="button" value="Druckeinstellungen" class="" id="Druckeinstellungen" title="Beim Aktivieren der Druckeinstellungen sind die Tooltips in der Karte deaktiviert"
+    />
+    <select class="" id="Druckformate" title="Druckformate auswählen">
+      <option value="">Bitte auswählen</option>
+    </select>
+    <select class="" id="Masstab" title="Masstab auswählen">
+      <option value="">Bitte auswählen</option>
+    </select>
+    <input type="button" value="Karte drucken" class="" id="KartenDruck" title="Karte drucken" />
+  </div>
+  <div id="map"></div>
+</body>
+
 </html>

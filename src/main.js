@@ -7,17 +7,25 @@ import PrintingMap, { DOTS_PER_INCH } from './Map';
 import PrintService from './PrintService';
 import PrintData from './PrintData';
 
-let map = new PrintingMap();
+// Test IdProjekt mit QGIS
+let idProj = 1430;
+let proj = document.querySelector("#IdProjekt");
+if (proj) {
+  idProj = proj.value;
+}
+// console.log("IdProj " + idProj);
+
+let map = new PrintingMap(getLastPosition(), getLastZoom());
 let templatesMap = null;
 let scalesMap = null;
 let selectedTemplate = null;
 let selectedScale = null;
 let printService = null;
-let printData = new PrintData(1430);
+let printData = new PrintData(idProj);
 let selectedDpi = 96;
 
 ready(function () {
-  console.log("Karte ready!");  
+  console.log("Karte ready!");
   console.log(DOTS_PER_INCH);
   console.log("DPI Factor " + window.devicePixelRatio);
 });
@@ -30,7 +38,7 @@ document.querySelector("#Druckeinstellungen").addEventListener("click", (evt) =>
     await printService.getApiAccessToken();
     templates = await printService.getTemplates();
     scales = await printService.getScales();
-  })()    
+  })()
     .then(() => {
       // console.log("Templates");
       templatesMap = JSON.parse(templates);
@@ -147,6 +155,24 @@ function addScales(scales) {
 function scaleToPixel(dpi, value) {
   const dim = parseInt(value);
   return Math.round(dpi * dim / 25.4);
+}
+
+function getLastPosition() {
+  let lastPosition = document.querySelector("#Position");
+  if (lastPosition) {
+    return lastPosition.value;
+  }
+
+  return 'POINT(12.2958 50.6231)';
+}
+
+function getLastZoom() {
+  let lastZoom = document.querySelector("#Zoom");
+  if (lastZoom) {
+    return lastZoom.value;
+  }
+
+  return 12;
 }
 
 // forEach(obj, (key, value, obj ) => {

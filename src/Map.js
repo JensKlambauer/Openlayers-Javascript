@@ -24,6 +24,7 @@ import { createStringXY } from 'ol/coordinate.js';
 import { unByKey } from 'ol/Observable';
 import Select from 'ol/interaction/Select'
 import { click, pointerMove, altKeyOnly } from 'ol/events/condition.js';
+import WKT from 'ol/format/WKT.js';
 
 const mousePositionControl = new MousePosition({
     coordinateFormat: createStringXY(4),
@@ -35,7 +36,16 @@ const DOTS_PER_INCH = 96;
 export { DOTS_PER_INCH };
 
 export default class PrintingMap {
-    constructor() {
+    constructor(wktCoordnate, zoom) {
+        var center = transform([12.2958, 50.6231], "EPSG:4326", "EPSG:3857");
+        if(wktCoordnate) {
+            let format = new WKT();
+            center = format.readGeometry(wktCoordnate, {
+                dataProjection: 'EPSG:4326',
+                featureProjection: 'EPSG:3857'
+            }).getCoordinates(); 
+        }
+
         this.map = new Map({
             controls: defaultControls({ attributionOptions: { collapsible: true } }).extend([mousePositionControl]),
             target: 'map',
@@ -50,10 +60,10 @@ export default class PrintingMap {
                     }), new SachsenDop()]
             })],
             view: new View({
-                center: transform([12.2958, 50.6231], "EPSG:4326", "EPSG:3857"),
+                center: center,
                 projection: get("EPSG:3857"),
                 //resolution: 100   
-                zoom: 13,
+                zoom: zoom ? zoom : 12,
             })
         });
         // console.log("map res " + this.map.getView().getResolution());
