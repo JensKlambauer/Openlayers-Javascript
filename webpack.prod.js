@@ -7,7 +7,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const devMode = process.env.NODE_ENV !== 'production'
 
 const root = path.resolve(__dirname);
-const dist = path.join(root, "prod");
+const dist = path.join(root, "public");
 
 module.exports = {
   entry: {

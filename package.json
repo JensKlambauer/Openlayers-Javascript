@@ -4,10 +4,9 @@
   "version": "0.0.1",
   "description": "Openlayers 4.65",
   "scripts": {
-    "start": "webpack --mode production --config webpack.prod.js",
-    "build": "echo 'Building...' && webpack --mode development",
-    "dev-server": "webpack-dev-server --mode development",
-    "watch": "./node_modules/.bin/webpack-dev-server --port 8182 --mode development --hot"
+    "start": "webpack-dev-server --mode development --open --watch",
+    "build": "echo 'Building...' && webpack --mode production --config webpack.prod.js",
+    "dev-server": "webpack-dev-server --mode development"   
   },
   "author": "Jens Klambauer",
   "repository": "https://github.com/JensKlambauer/Openlayers-Javascript.git",
