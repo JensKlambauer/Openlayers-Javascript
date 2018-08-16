@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const path = require("path");
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const ExtractCssChunks = require("extract-css-chunks-webpack-plugin");
+const Dotenv = require('dotenv-webpack');
 
 const devMode = process.env.NODE_ENV !== 'production'
 
@@ -9,6 +10,7 @@ const root = path.resolve(__dirname);
 const dist = path.join(root, "dist");
 
 module.exports = {
+  node: { fs: 'empty' },
   entry: { app: path.join(root, "src", "main.js") },
   devtool: 'inline-source-map',
   // devtool: "source-map",
@@ -65,8 +67,8 @@ module.exports = {
         hot: true // optional is the plguin cannot automatically detect if you are using HOT, not for production use
       }
     ),
-    // new webpack.optimize.UglifyJsPlugin()
-  ],
+    new Dotenv()
+  ],  
   devServer: {
     contentBase: path.join(__dirname, "dist"),
     headers: {

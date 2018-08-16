@@ -3,7 +3,7 @@ import PrintConfig from './PrintConfig';
 
 export default class PrintService {
     constructor() {
-        this.webApiTokenUrl = 'http://localhost:55555/Token';
+        this.webApiTokenUrl = process.env.API_TOKEN_URL;
     }
 
     async getApiAccessToken() {

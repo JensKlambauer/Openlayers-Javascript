@@ -10,13 +10,7 @@ export default class WebApiConnection {
     }
 
     async getAccessToken() {
-        // var loginData = {
-        //     grant_type: 'password',
-        //     username: 'admin@example.de',
-        //     password: 'Admin+1'
-        // };
-
-        var loginData = "grant_type=password&username=" + encodeURIComponent('admin@example.de')+ "&password=" + encodeURIComponent('Admin+1');
+        var loginData = "grant_type=password&username=" + encodeURIComponent(process.env.API_USER) + "&password=" + encodeURIComponent(process.env.API_PASS);
         // let json = JSON.stringify(loginData);
         var access_tokens = await PostRequest(this.url, loginData);
         this.token = JSON.parse(access_tokens);

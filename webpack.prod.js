@@ -2,7 +2,8 @@ const webpack = require('webpack');
 const path = require("path");
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const ExtractCssChunks = require("extract-css-chunks-webpack-plugin");
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
 const devMode = process.env.NODE_ENV !== 'production'
 
@@ -10,6 +11,7 @@ const root = path.resolve(__dirname);
 const dist = path.join(root, "public");
 
 module.exports = {
+  node: { fs: 'empty' },
   entry: {
     'babel-polyfill': ['babel-polyfill'],
     app: path.join(root, "src", "main.js")
@@ -64,7 +66,8 @@ module.exports = {
         filename: "[name].css",
         chunkFilename: "[id].css"
       }
-    )
+    ),
+    new Dotenv()
   ],
   optimization: {
     minimizer: [

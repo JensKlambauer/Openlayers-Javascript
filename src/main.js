@@ -27,6 +27,7 @@ let selectedDpi = 96;
 ready(function () {
   console.log("Karte ready!");
   console.log(DOTS_PER_INCH);
+  console.log(process.env.KF_RB_URL);
   console.log("DPI Factor " + window.devicePixelRatio);
 });
 
