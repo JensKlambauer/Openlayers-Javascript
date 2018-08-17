@@ -1,3 +1,4 @@
+// import './assets/images/favicon.ico';
 import 'ol/ol.css';
 import 'ol-layerswitcher/src/ol-layerswitcher.css';
 import 'ol-popup/src/ol-popup.css';

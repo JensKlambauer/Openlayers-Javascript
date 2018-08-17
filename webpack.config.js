@@ -4,7 +4,7 @@ const HtmlWebPackPlugin = require("html-webpack-plugin");
 const ExtractCssChunks = require("extract-css-chunks-webpack-plugin");
 const Dotenv = require('dotenv-webpack');
 
-const devMode = process.env.NODE_ENV !== 'production'
+// const devMode = process.env.NODE_ENV !== 'production'
 
 const root = path.resolve(__dirname);
 const dist = path.join(root, "dist");
@@ -41,6 +41,10 @@ module.exports = {
             options: { minimize: true }
           }
         ]
+      },
+      {
+        test: /\.(jpe?g|png|gif|ico)$/i, 
+        loader: 'file?name=[name].[ext]'
       }
     ]
   },
@@ -55,6 +59,7 @@ module.exports = {
     new webpack.NamedModulesPlugin(),
     new webpack.HotModuleReplacementPlugin(),
     new HtmlWebPackPlugin({
+      favicon: 'src/assets/images/favicon.ico',
       template: path.join(root, "src", "index.html"),
       filename: path.join(dist, "index.html")
     }),
@@ -67,7 +72,10 @@ module.exports = {
         hot: true // optional is the plguin cannot automatically detect if you are using HOT, not for production use
       }
     ),
-    new Dotenv()
+    new Dotenv({
+      path: path.join(__dirname, '.env'), 
+      systemvars: true    
+    })
   ],  
   devServer: {
     contentBase: path.join(__dirname, "dist"),
