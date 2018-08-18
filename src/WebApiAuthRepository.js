@@ -1,6 +1,6 @@
 import { PostRequest } from "./AjaxRequest";
 
-export default class WebApiConnection {
+export default class WebApiAuthRepository {
     constructor(url) {
         this.url = url;
     }
@@ -15,14 +15,4 @@ export default class WebApiConnection {
         var access_tokens = await PostRequest(this.url, loginData);
         this.token = JSON.parse(access_tokens);
     }
-
-    async postPrintData(data, token) {
-        let json = JSON.stringify(data);
-        await PostRequest('http://localhost:55555/api/v1/Print/PrintMap', json, token);
-    }
-
-    // async postStreckeDaten(data, token) {
-    //     let json = JSON.stringify(data);
-    //     await PostRequest("http://localhost:55555/api/v1/Print/Strecke", json, token);
-    // }
 }

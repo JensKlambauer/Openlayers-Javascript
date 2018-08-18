@@ -1,4 +1,3 @@
-// import './assets/images/favicon.ico';
 import 'ol/ol.css';
 import 'ol-layerswitcher/src/ol-layerswitcher.css';
 import 'ol-popup/src/ol-popup.css';
@@ -55,7 +54,7 @@ document.querySelector("#Druckformate").addEventListener("change", function () {
   var elem = (typeof this.selectedIndex === "undefined" ? window.event.srcElement : this);
   var value = elem.value || elem.options[elem.selectedIndex].value;
   selectedTemplate = templatesMap.find(x => x.name === value);
-  console.log(selectedTemplate);
+  // console.log(selectedTemplate);
   printData.set_template = selectedTemplate.name;
   if (!selectedScale || !selectedTemplate) {
     return;
@@ -74,7 +73,7 @@ document.querySelector("#Masstab").addEventListener("change", function () {
   var elem = (typeof this.selectedIndex === "undefined" ? window.event.srcElement : this);
   var value = elem.value || elem.options[elem.selectedIndex].value;
   selectedScale = scalesMap.find(x => x === parseInt(value));
-  console.log(selectedScale);
+  // console.log(selectedScale);
   printData.set_scale = selectedScale;
   if (!selectedScale || !selectedTemplate) {
     return;

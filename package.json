@@ -1,8 +1,8 @@
 {
   "name": "ol_js_webpack",
   "displayName": "OpenlayersApp",
-  "version": "0.0.1",
-  "description": "Openlayers 4.65",
+  "version": "0.1.0",
+  "description": "Openlayers 5.13",
   "scripts": {
     "start": "webpack-dev-server --mode development --open --watch",
     "build": "echo 'Building...' && webpack --mode production --config webpack.prod.js",

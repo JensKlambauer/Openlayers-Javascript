@@ -1,5 +1,5 @@
-import WebApiConnection from './WebApiConnection';
-import PrintConfig from './PrintConfig';
+import WebApiAuthRepository from './WebApiAuthRepository';
+import PrintRepository from './PrintRepository';
 
 export default class PrintService {
     constructor() {
@@ -7,22 +7,23 @@ export default class PrintService {
     }
 
     async getApiAccessToken() {
-        this.connection = new WebApiConnection(this.webApiTokenUrl);
+        this.connection = new WebApiAuthRepository(this.webApiTokenUrl);
         await this.connection.getAccessToken();
         this.token = this.connection.tokenWebApi['access_token'];
     }
 
     async getTemplates() {
-        const printConfig = new PrintConfig(this.token);
+        const printConfig = new PrintRepository(this.token);
         return await printConfig.listTemplates();
     }
 
     async getScales() {
-        const printConfig = new PrintConfig(this.token);
+        const printConfig = new PrintRepository(this.token);
         return await printConfig.listMapScales();
     }
 
     async postPrintData(data) {
-        await this.connection.postPrintData(data, this.token);
+        const printConfig = new PrintRepository(this.token);
+        await printConfig.postPrintData(data);
     }
 } 
