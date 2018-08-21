@@ -137,15 +137,18 @@ export default class PrintingMap {
 
         this.featureCount = 0;
         let breite = center[0];
+        let rightBound = center[0];
         let hoehe = center[1];
         while (hoehe < bounds[3]) {
-            while (breite < bounds[2]) {
+            while (rightBound < bounds[2]) {
                 const extb = this.getExtPrintView([breite, hoehe])
                 this.addFeaturePrint(extb);
-                breite = breite + (ext[2] - ext[0]);
+                rightBound = breite + ((ext[2] - ext[0]) / 2);
+                breite = breite + (ext[2] - ext[0]);                
             }
             hoehe = hoehe + (ext[3] - ext[1]);
             breite = center[0];
+            rightBound = center[0];
         }
 
         breite = center[0];
@@ -162,14 +165,17 @@ export default class PrintingMap {
 
         breite = center[0];
         hoehe = center[1];
+        rightBound = center[0];
         while (hoehe > bounds[1]) {
-            while (breite < bounds[2]) {
+            while (rightBound < bounds[2]) {
                 const extb = this.getExtPrintView([breite, hoehe - (ext[3] - ext[1])])
                 this.addFeaturePrint(extb);
+                rightBound = breite + ((ext[2] - ext[0]) / 2);
                 breite = breite + (ext[2] - ext[0]);
             }
             hoehe = hoehe - (ext[3] - ext[1]);
             breite = center[0];
+            rightBound = center[0];
         }
 
         breite = center[0];
