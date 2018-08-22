@@ -111,45 +111,59 @@ document.querySelector("#KartenDruck").addEventListener("click", (evt) => {
     .catch(e => { alert("Fehler beim Drucken"); console.error(e); });
 });
 
+/**   
+  *
+  * @param {Array} templates The Map Templates.
+  * 
+  */
 function addTemplates(templates) {
   // console.log(templates);
-  document.querySelector("#Druckformate").innerHTML = "";
+  const templateSelect = document.querySelector("#Druckformate");
   if (!templates || templates.length === 0) {
-    document.querySelector("#Druckformate").innerHTML = '<option value="">Keine Templates vorhanden</option>';
+    templateSelect.innerHTML = '<option value="">Keine Templates vorhanden</option>';
     return;
   }
-  var opt = document.createElement("option");
+
+  templateSelect.innerHTML = '';
+
+  const opt = document.createElement("option");
   opt.text = "Bitte Template auswählen";
   opt.value = "";
-  var select = document.querySelector("#Druckformate");
-  select.appendChild(opt);
+  templateSelect.add(opt);
 
-  forEach(templates, (key, value, obj) => {
-    const option = document.createElement("option");
-    option.text = value.name;
-    option.value = value.name;
-    select.appendChild(option);
+  templates.forEach(template => {
+    const option = document.createElement('option');
+    option.text = template.name;
+    option.value = template.name;
+    templateSelect.add(option);
   });
 }
 
+/**   
+  *
+  * @param {Array} scales The Map Scales.
+  * 
+  */
 function addScales(scales) {
   // console.log(scales);
-  document.querySelector("#Masstab").innerHTML = "";
+  const scaleSelect = document.querySelector("#Masstab");
   if (!scales || scales.length === 0) {
-    document.querySelector("#Masstab").innerHTML = '<option value="">Kein Maßstab vorhanden</option>';
+    scaleSelect.innerHTML = '<option value="">Kein Maßstab vorhanden</option>';
     return;
   }
-  var opt = document.createElement("option");
+
+  scaleSelect.innerHTML = '';
+
+  const opt = document.createElement("option");
   opt.text = "Bitte Maßstab auswählen";
   opt.value = "";
-  var select = document.querySelector("#Masstab");
-  select.appendChild(opt);
+  scaleSelect.add(opt);
 
-  forEach(scales, (key, value, obj) => {
-    const option = document.createElement("option");
-    option.text = value;
-    option.value = value;
-    select.appendChild(option);
+  scales.forEach(scale => {
+    const option = document.createElement('option');
+    option.text = scale;
+    option.value = scale;
+    scaleSelect.add(option);
   });
 }
 
@@ -179,11 +193,11 @@ function getLastZoom() {
 // forEach(obj, (key, value, obj ) => {
 //   console.log(key, value, obj );
 // });
-const forEach = function (obj, fn) {
-  for (const keyValuePair of Object.entries(obj)) {
-    fn(...keyValuePair, obj);
-  }
-};
+// const forEach = function (obj, fn) {
+//   for (const keyValuePair of Object.entries(obj)) {
+//     fn(...keyValuePair, obj);
+//   }
+// };
 
 function ready(callback) {
   // in case the document is already rendered
