@@ -25,6 +25,7 @@ import { unByKey } from 'ol/Observable';
 import Select from 'ol/interaction/Select'
 import { click, pointerMove, altKeyOnly } from 'ol/events/condition.js';
 import WKT from 'ol/format/WKT.js';
+import BingMaps from 'ol/source/BingMaps.js';
 
 const mousePositionControl = new MousePosition({
     coordinateFormat: createStringXY(4),
@@ -57,11 +58,22 @@ export default class PrintingMap {
                         type: 'base',
                         visible: true,
                         source: new OSM()
-                    }), new SachsenDop()]
+                    }), 
+                    new SachsenDop(),
+                    new TileLayer({
+                        title: 'Bing',
+                        type: 'base',                        
+                        source: new BingMaps({
+                          imagerySet: 'Aerial',                          
+                          key: process.env.BING_KEY
+                        }),
+                        visible: false,
+                      })]
             })],
             view: new View({
                 center: center,
                 projection: get("EPSG:3857"),
+                maxZoom: 19,
                 //resolution: 100   
                 zoom: zoom ? zoom : 12,
             })
