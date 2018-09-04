@@ -26,6 +26,7 @@ import Select from 'ol/interaction/Select'
 import { click, pointerMove, altKeyOnly } from 'ol/events/condition.js';
 import WKT from 'ol/format/WKT.js';
 import BingMaps from 'ol/source/BingMaps.js';
+import { MouseWheelZoom, DragPan } from 'ol/interaction.js';
 
 const mousePositionControl = new MousePosition({
     coordinateFormat: createStringXY(4),
@@ -96,6 +97,7 @@ export default class PrintingMap {
         // });
 
         this.showPrintBox = false;
+        this.interaktionen = true;        
     }
 
     get extentsPrint() {
@@ -140,12 +142,8 @@ export default class PrintingMap {
         // this.addFeaturePrint(ext);
         // console.log("Center " + this.map.getView().getCenter())
         // console.log("width: " + this.width + " height: " + this.height);
-        console.log(this.map.getSize());
+        // console.log(this.map.getSize());
         let bounds = this.map.getView().calculateExtent(this.map.getSize());
-
-        // Bounds Map        
-        //var ext = this.map.getView().calculateExtent(this.map.getSize()); 
-
 
         this.featureCount = 0;
         let breite = center[0];
@@ -309,5 +307,23 @@ export default class PrintingMap {
         this.featureCount++;
         // console.log(this.featureCount);
         this.printSource.addFeature(feature);
+    }
+
+    disableIntact(e) { 
+        const interactions = this.interaktionen;       
+        this.map.getInteractions().forEach(function (interaction) {
+            if (interaction instanceof MouseWheelZoom) {
+                //console.log("MouseWheelZoom");
+                interaction.setActive(!interactions);
+            }
+
+            if (interaction instanceof DragPan) {
+                //console.log("DragPan");
+                interaction.setActive(!interactions);
+            }
+
+            //map.removeInteraction(interaction);
+        }, this);
+        this.interaktionen = !this.interaktionen;
     }
 }

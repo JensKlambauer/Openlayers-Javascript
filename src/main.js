@@ -46,6 +46,7 @@ document.querySelector("#Druckeinstellungen").addEventListener("click", (evt) =>
       addTemplates(templatesMap);
       scalesMap = JSON.parse(scales);
       addScales(scalesMap);
+      map.disableIntact();
     })
     .catch(e => { alert("Fehler - Verbindung mit Server"); console.error(e); });
 });
@@ -91,7 +92,8 @@ document.querySelector("#Masstab").addEventListener("change", function () {
 document.querySelector("#KartenDruck").addEventListener("click", (evt) => {
   // Extents von Druckrahmen  
   // console.log(map.selectedPrintFeatures);
-  if (!map.selectedPrintFeatures) {
+  if (!map.selectedPrintFeatures || map.selectedPrintFeatures.length === 0) {
+    alert("Bitte mindestens einen Druckbereich auswählen.")
     return;
   }
   // console.log(map.extentsPrint);
