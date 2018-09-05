@@ -26,4 +26,9 @@ export default class PrintService {
         const printConfig = new PrintRepository(this.token);
         await printConfig.postPrintData(data);
     }
+
+    async getFeatures(idProj) {
+        const printConfig = new PrintRepository(this.token);
+        return await printConfig.getFeatures(idProj);
+    }
 } 

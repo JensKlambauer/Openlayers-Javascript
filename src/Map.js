@@ -7,9 +7,9 @@ import OSM from 'ol/source/OSM';
 import { addProjection, addCoordinateTransforms, transform, get, METERS_PER_UNIT } from 'ol/proj.js';
 import Group from 'ol/layer/Group';
 import LayerSwitcher from 'ol-layerswitcher';
-import Popup from 'ol-popup';
+// import Popup from 'ol-popup';
 // import Coordinate from 'ol/coordinate';
-import { toStringHDMS } from 'ol/coordinate';
+// import { toStringHDMS } from 'ol/coordinate';
 import SachsenDop from './SachsenWmsDopLayer';
 import VectorLayer from 'ol/layer/Vector.js';
 import VectorSource from 'ol/source/Vector.js';
@@ -27,6 +27,8 @@ import { click, pointerMove, altKeyOnly } from 'ol/events/condition.js';
 import WKT from 'ol/format/WKT.js';
 import BingMaps from 'ol/source/BingMaps.js';
 import { MouseWheelZoom, DragPan } from 'ol/interaction.js';
+import Collection from 'ol/Collection';
+import { bbox as bboxStrategy } from 'ol/loadingstrategy.js';
 
 const mousePositionControl = new MousePosition({
     coordinateFormat: createStringXY(4),
@@ -38,14 +40,15 @@ const DOTS_PER_INCH = 96;
 export { DOTS_PER_INCH };
 
 export default class PrintingMap {
-    constructor(wktCoordnate, zoom) {
+    constructor(wktCoordnate, zoom, idProj) {
+        this.idProj = idProj;
         var center = transform([12.2958, 50.6231], "EPSG:4326", "EPSG:3857");
-        if(wktCoordnate) {
+        if (wktCoordnate) {
             let format = new WKT();
             center = format.readGeometry(wktCoordnate, {
                 dataProjection: 'EPSG:4326',
                 featureProjection: 'EPSG:3857'
-            }).getCoordinates(); 
+            }).getCoordinates();
         }
 
         this.map = new Map({
@@ -59,17 +62,17 @@ export default class PrintingMap {
                         type: 'base',
                         visible: true,
                         source: new OSM()
-                    }), 
+                    }),
                     new SachsenDop(),
                     new TileLayer({
                         title: 'Bing',
-                        type: 'base',                        
+                        type: 'base',
                         source: new BingMaps({
-                          imagerySet: 'Aerial',                          
-                          key: process.env.BING_KEY
+                            imagerySet: 'Aerial',
+                            key: process.env.BING_KEY
                         }),
                         visible: false,
-                      })]
+                    })]
             })],
             view: new View({
                 center: center,
@@ -97,7 +100,8 @@ export default class PrintingMap {
         // });
 
         this.showPrintBox = false;
-        this.interaktionen = true;        
+        this.interaktionen = true;
+        this.printService = null;        
     }
 
     get extentsPrint() {
@@ -154,7 +158,7 @@ export default class PrintingMap {
                 const extb = this.getExtPrintView([breite, hoehe])
                 this.addFeaturePrint(extb);
                 rightBound = breite + ((ext[2] - ext[0]) / 2);
-                breite = breite + (ext[2] - ext[0]);                
+                breite = breite + (ext[2] - ext[0]);
             }
             hoehe = hoehe + (ext[3] - ext[1]);
             breite = center[0];
@@ -230,7 +234,7 @@ export default class PrintingMap {
                     text: new Text({
                         text: featId.toString(),
                         font: "Bold " + 14 + 'px sans-serif',
-                        stroke: new Stroke({color: "#fff", width: 5}),
+                        stroke: new Stroke({ color: "#fff", width: 5 }),
                         fill: new Fill({
                             color: '#000'
                         })
@@ -309,8 +313,8 @@ export default class PrintingMap {
         this.printSource.addFeature(feature);
     }
 
-    disableIntact(e) { 
-        const interactions = this.interaktionen;       
+    disableIntact(e) {
+        const interactions = this.interaktionen;
         this.map.getInteractions().forEach(function (interaction) {
             if (interaction instanceof MouseWheelZoom) {
                 //console.log("MouseWheelZoom");
@@ -325,5 +329,63 @@ export default class PrintingMap {
             //map.removeInteraction(interaction);
         }, this);
         this.interaktionen = !this.interaktionen;
+    }
+
+    addFeaturesUser(printService) {
+        // console.log(this.idProj)
+        const idProj = this.idProj;
+        const features = new Collection();
+        const vectorSource = new VectorSource({
+            features: features,
+            loader: function (extent, resolution, projection) {
+                let res = null;
+                // let json = JSON.stringify({ idProj: this.idProj });
+                (async function () {
+                    res = await printService.getFeatures(idProj);
+                })()
+                    .then(() => {  
+                        // console.log(res);                       
+                        const resJson = JSON.parse(res);
+                        // console.log(resJson.error);
+                        if (resJson.error === 0) {
+                            const format = new WKT();
+                            resJson.data.features.forEach(function (feat) {                                
+                                var feature = format.readFeature(feat.Wkt, {
+                                    dataProjection: 'EPSG:4326',
+                                    featureProjection: 'EPSG:3857'
+                                });
+                                if (feature) {
+                                    feature.setId(feat.Id);
+                                    vectorSource.addFeature(feature);
+                                }
+                            });
+                            // checkFeaturesIsPolygon();
+                        }
+                    })
+                    .catch(e => { console.error(e); });
+            },
+            strategy: bboxStrategy
+        });
+
+        const vector = new VectorLayer({
+            source: vectorSource,
+            style: new Style({
+                fill: new Fill({
+                    color: 'rgba(255, 0, 0, 0.1)'
+                }),
+                stroke: new Stroke({
+                    color: '#ff0000',
+                    width: 2
+                }),
+                image: new CircleStyle({
+                    radius: 5,
+                    fill: new Fill({
+                        color: '#ff0000'
+                    })
+                })
+            })
+        });
+    
+        this.map.addLayer(vector);
     }
 }

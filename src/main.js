@@ -15,7 +15,7 @@ if (proj) {
 }
 // console.log("IdProj " + idProj);
 
-let map = new PrintingMap(getLastPosition(), getLastZoom());
+let map = new PrintingMap(getLastPosition(), getLastZoom(), idProj);
 let templatesMap = null;
 let scalesMap = null;
 let selectedTemplate = null;
@@ -47,6 +47,7 @@ document.querySelector("#Druckeinstellungen").addEventListener("click", (evt) =>
       scalesMap = JSON.parse(scales);
       addScales(scalesMap);
       map.disableIntact();
+      map.addFeaturesUser(printService);
     })
     .catch(e => { alert("Fehler - Verbindung mit Server"); console.error(e); });
 });

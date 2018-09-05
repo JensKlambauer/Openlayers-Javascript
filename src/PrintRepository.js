@@ -19,4 +19,9 @@ export default class PrintRepository {
         let json = JSON.stringify(data);
         await PostRequest(process.env.API_PRINT_URL + '/PrintMap', json, this.token);
     }
+
+    async getFeatures(idProj) {
+        const apiUrl = process.env.API_PRINT_URL + `/Features?idProj=` + idProj;        
+        return await GetRequest(apiUrl, this.token);
+    }  
 }
