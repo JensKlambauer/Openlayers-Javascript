@@ -29,6 +29,7 @@ import BingMaps from 'ol/source/BingMaps.js';
 import { MouseWheelZoom, DragPan } from 'ol/interaction.js';
 import Collection from 'ol/Collection';
 import { bbox as bboxStrategy } from 'ol/loadingstrategy.js';
+import { PostRequest } from "./AjaxRequest";
 
 const mousePositionControl = new MousePosition({
     coordinateFormat: createStringXY(4),
@@ -101,7 +102,7 @@ export default class PrintingMap {
 
         this.showPrintBox = false;
         this.interaktionen = true;
-        this.printService = null;        
+        this.showUserFeatures = false;
     }
 
     get extentsPrint() {
@@ -331,7 +332,11 @@ export default class PrintingMap {
         this.interaktionen = !this.interaktionen;
     }
 
-    addFeaturesUser(printService) {
+    addFeaturesUser() {
+        if (this.showUserFeatures === true) {
+            return;
+        }
+
         // console.log(this.idProj)
         const idProj = this.idProj;
         const features = new Collection();
@@ -339,17 +344,20 @@ export default class PrintingMap {
             features: features,
             loader: function (extent, resolution, projection) {
                 let res = null;
-                // let json = JSON.stringify({ idProj: this.idProj });
+                let json = JSON.stringify({ idProj: idProj });
+                // console.log(json);
+                const url = process.env.KF_RB_URL;
                 (async function () {
-                    res = await printService.getFeatures(idProj);
+                    // res = await printService.getFeatures(idProj);
+                    res = await PostRequest(url, json);
                 })()
-                    .then(() => {  
+                    .then(() => {
                         // console.log(res);                       
                         const resJson = JSON.parse(res);
                         // console.log(resJson.error);
                         if (resJson.error === 0) {
                             const format = new WKT();
-                            resJson.data.features.forEach(function (feat) {                                
+                            resJson.data.features.forEach(function (feat) {
                                 var feature = format.readFeature(feat.Wkt, {
                                     dataProjection: 'EPSG:4326',
                                     featureProjection: 'EPSG:3857'
@@ -359,7 +367,6 @@ export default class PrintingMap {
                                     vectorSource.addFeature(feature);
                                 }
                             });
-                            // checkFeaturesIsPolygon();
                         }
                     })
                     .catch(e => { console.error(e); });
@@ -385,7 +392,8 @@ export default class PrintingMap {
                 })
             })
         });
-    
+
         this.map.addLayer(vector);
+        this.showUserFeatures = true;
     }
 }

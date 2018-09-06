@@ -29,6 +29,9 @@ export function PostRequest(url, data, token) {
     return new Promise(function (resolve, reject) {       
         var xhr = new XMLHttpRequest();
         xhr.open("POST", url, true);
+        // xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
+        // xhr.setRequestHeader('Content-type', 'application/ecmascript');
+        // xhr.setRequestHeader('Access-Control-Allow-Origin', '*');        
         xhr.setRequestHeader('Content-type','application/json; charset=utf-8');   
         xhr.onload = function () {
             if (this.status >= 200 && this.status < 300) {
