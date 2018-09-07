@@ -345,7 +345,7 @@ export default class PrintingMap {
             loader: function (extent, resolution, projection) {
                 let res = null;
                 let json = JSON.stringify({ idProj: idProj });
-                // console.log(json);
+                // URL GetFeature aus Config .env
                 const url = process.env.KF_RB_URL;
                 (async function () {
                     // res = await printService.getFeatures(idProj);
@@ -363,7 +363,7 @@ export default class PrintingMap {
                                     featureProjection: 'EPSG:3857'
                                 });
                                 if (feature) {
-                                    feature.setId(feat.Id);
+                                    feature.setId(feat.FeatId);
                                     vectorSource.addFeature(feature);
                                 }
                             });

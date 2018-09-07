@@ -170,8 +170,15 @@ function addScales(scales) {
   });
 }
 
+/**   
+  *
+  * @param {Number} dpi DPI View.
+  * @param {Number} value Wert in millimeter.
+  * @returns {Number} Wert in pixel.
+  */
 function scaleToPixel(dpi, value) {
   const dim = parseInt(value);
+  // Umrechnung von Millimeter, DPI in Pixel
   return Math.round(dpi * dim / 25.4);
 }
 
