@@ -28,16 +28,23 @@ ready(function () {
   console.log("Karte ready!");
   console.log(DOTS_PER_INCH);
   // console.log(process.env.KF_RB_URL);
-  console.log("DPI Factor " + window.devicePixelRatio);
-  map.addFeaturesUser();
+  console.log("DPI Factor " + window.devicePixelRatio);  
+  (async function () {
+    printService = new PrintService();
+    await printService.getApiAccessToken(); 
+  })()
+    .then(() => {
+      map.addFeaturesUser(printService);
+    })
+    .catch(e => { alert("Fehler - Verbindung mit Server"); console.error(e); });
 });
 
 document.querySelector("#Druckeinstellungen").addEventListener("click", (evt) => {
   let templates = null;
   let scales = null;
   (async function () {
-    printService = new PrintService();
-    await printService.getApiAccessToken();
+    // printService = new PrintService();
+    // await printService.getApiAccessToken();
     templates = await printService.getTemplates();
     scales = await printService.getScales();
   })()
@@ -47,7 +54,7 @@ document.querySelector("#Druckeinstellungen").addEventListener("click", (evt) =>
       addTemplates(templatesMap);
       scalesMap = JSON.parse(scales);
       addScales(scalesMap);
-      map.disableIntact();      
+      map.disableIntact();
     })
     .catch(e => { alert("Fehler - Verbindung mit Server"); console.error(e); });
 });

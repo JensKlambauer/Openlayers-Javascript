@@ -331,8 +331,8 @@ export default class PrintingMap {
         }, this);
         this.interaktionen = !this.interaktionen;
     }
-
-    addFeaturesUser() {
+    
+    addFeaturesUser(printService) {
         if (this.showUserFeatures === true) {
             return;
         }
@@ -348,8 +348,8 @@ export default class PrintingMap {
                 // URL GetFeature aus Config .env
                 const url = process.env.KF_RB_URL;
                 (async function () {
-                    // res = await printService.getFeatures(idProj);
-                    res = await PostRequest(url, json);
+                    res = await printService.getFeatures(idProj);
+                    // res = await PostRequest(url, json);
                 })()
                     .then(() => {
                         // console.log(res);                       
