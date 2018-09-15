@@ -346,7 +346,7 @@ export default class PrintingMap {
                 let res = null;
                 let json = JSON.stringify({ idProj: idProj });
                 // URL GetFeature aus Config .env
-                const url = process.env.KF_RB_URL;
+                // const url = process.env.KF_RB_URL;
                 (async function () {
                     res = await printService.getFeatures(idProj);
                     // res = await PostRequest(url, json);
