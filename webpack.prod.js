@@ -77,6 +77,7 @@ module.exports = {
   optimization: {
     minimizer: [
       new UglifyJsPlugin()
-    ]
+    ],
+    splitChunks: {chunks: 'all'}
   }
 };

@@ -29,7 +29,6 @@ import BingMaps from 'ol/source/BingMaps.js';
 import { MouseWheelZoom, DragPan } from 'ol/interaction.js';
 import Collection from 'ol/Collection';
 import { bbox as bboxStrategy } from 'ol/loadingstrategy.js';
-import { PostRequest } from "./AjaxRequest";
 
 const mousePositionControl = new MousePosition({
     coordinateFormat: createStringXY(4),
