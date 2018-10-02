@@ -78,6 +78,6 @@ module.exports = {
     minimizer: [
       new UglifyJsPlugin()
     ],
-    splitChunks: {chunks: 'all'}
+    // splitChunks: {chunks: 'all'}
   }
 };
