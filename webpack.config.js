@@ -1,7 +1,6 @@
 const webpack = require('webpack');
 const path = require("path");
 const HtmlWebPackPlugin = require("html-webpack-plugin");
-const ExtractCssChunks = require("extract-css-chunks-webpack-plugin");
 const Dotenv = require('dotenv-webpack');
 
 // const devMode = process.env.NODE_ENV !== 'production'
@@ -12,8 +11,7 @@ const dist = path.join(root, "dist");
 module.exports = {
   node: { fs: 'empty' },
   entry: { app: path.join(root, "src", "main.js") },
-  devtool: 'inline-source-map',
-  // devtool: "source-map",
+  devtool: 'eval-source-map',
   module: {
     rules: [
       {
@@ -29,8 +27,8 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-          ExtractCssChunks.loader,
-          "css-loader"
+          { loader: 'style-loader' },
+          { loader: 'css-loader' },
         ]
       },
       {
@@ -43,7 +41,7 @@ module.exports = {
         ]
       },
       {
-        test: /\.(jpe?g|png|gif|ico)$/i, 
+        test: /\.(jpe?g|png|gif|ico)$/i,
         loader: 'file?name=[name].[ext]'
       }
     ]
@@ -62,21 +60,12 @@ module.exports = {
       favicon: 'assets/images/favicon.ico',
       template: path.join(root, "src", "index.html"),
       filename: path.join(dist, "index.html")
-    }),
-    new ExtractCssChunks(
-      {
-        // Options similar to the same options in webpackOptions.output
-        // both options are optional
-        filename: "[name].css",
-        chunkFilename: "[id].css",
-        hot: true // optional is the plguin cannot automatically detect if you are using HOT, not for production use
-      }
-    ),
+    }),   
     new Dotenv({
-      path: path.join(__dirname, '.env'), 
-      systemvars: true    
+      path: path.join(__dirname, '.env'),
+      systemvars: true
     })
-  ],  
+  ],
   devServer: {
     contentBase: path.join(__dirname, "dist"),
     headers: {
@@ -85,7 +74,7 @@ module.exports = {
     },
     // compress: true,
     port: 8099,
-    inline: true,
-    hot: true
+    // inline: true,
+    // hot: true
   },
 };

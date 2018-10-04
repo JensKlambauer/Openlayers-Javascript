@@ -48,7 +48,7 @@ module.exports = {
         ]
       },
       {
-        test: /\.(jpe?g|png|gif|ico)$/i, 
+        test: /\.(jpe?g|png|gif|ico)$/i,
         loader: 'file?name=[name].[ext]'
       }
     ]
@@ -76,7 +76,11 @@ module.exports = {
   ],
   optimization: {
     minimizer: [
-      new UglifyJsPlugin()
+      new UglifyJsPlugin({
+        cache: true,
+        parallel: true,
+        // sourceMap: true // set to true if you want JS source maps
+      })
     ],
     // splitChunks: {chunks: 'all'}
   }

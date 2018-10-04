@@ -21,7 +21,7 @@ export default class PrintRepository {
     }
 
     async getFeatures(idProj) {
-        const apiUrl = process.env.API_PRINT_URL + `/Features?idProj=` + idProj;        
+        const apiUrl = process.env.API_PRINT_URL + `/Features/` + idProj;        
         return await GetRequest(apiUrl, this.token);
     }  
 }
