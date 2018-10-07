@@ -1,4 +1,4 @@
-import { GetRequest, PostRequest } from "./AjaxRequest";
+import { GetRequest, PostRequest, GetRequestFetch } from "./AjaxRequest";
 
 export default class PrintRepository {
     constructor(token) {
@@ -22,6 +22,6 @@ export default class PrintRepository {
 
     async getFeatures(idProj) {
         const apiUrl = process.env.API_PRINT_URL + `/Features/` + idProj;        
-        return await GetRequest(apiUrl, this.token);
+        return await GetRequestFetch(apiUrl, this.token);
     }  
 }
