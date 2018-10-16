@@ -29,14 +29,14 @@ ready(function () {
   console.log(DOTS_PER_INCH);
   // console.log(process.env.KF_RB_URL);
   console.log("DPI Factor " + window.devicePixelRatio);  
-  (async function () {
-    printService = new PrintService();
-    await printService.getApiAccessToken(); 
-  })()
-    .then(() => {
-      map.addFeaturesUser(printService);
-    })
-    .catch(e => { alert("Fehler - Verbindung mit Server"); console.error(e); });
+  // (async function () {
+  //   printService = new PrintService();
+  //   await printService.getApiAccessToken(); 
+  // })()
+  //   .then(() => {
+  //     map.addFeaturesUser(printService);
+  //   })
+  //   .catch(e => { alert("Fehler - Verbindung mit Server"); console.error(e); });
 });
 
 document.querySelector("#Druckeinstellungen").addEventListener("click", (evt) => {
