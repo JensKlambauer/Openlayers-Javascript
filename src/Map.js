@@ -1,7 +1,7 @@
 import Map from 'ol/Map.js';
 import View from 'ol/View.js';
 import TileLayer from 'ol/layer/Tile';
-import OSM from 'ol/source/OSM';
+import OSM from 'ol/source/OSM.js';
 //import XYZ from 'ol/source/xyz';
 // import Proj from 'ol/proj';
 import { addProjection, addCoordinateTransforms, transform, get, METERS_PER_UNIT } from 'ol/proj.js';
